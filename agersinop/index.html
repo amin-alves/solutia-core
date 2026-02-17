@@ -1,138 +1,110 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>AGER Sinop | Acesso Restrito</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>AGERSINOP - Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f1f5f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.login-box {
-    background: white;
-    padding: 40px;
-    width: 100%;
-    max-width: 420px;
-    border-radius: 6px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    text-align: center;
-}
-.logo {
-    max-width: 100px;
-    margin-bottom: 15px;
-}
-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-}
-button {
-    width: 100%;
-    padding: 12px;
-    background: #1d4ed8;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-button:hover {
-    background: #1e40af;
-}
-.forgot {
-    margin-top: 10px;
-    font-size: 13px;
-}
-.footer {
-    margin-top: 25px;
-    font-size: 12px;
-    color: #64748b;
-}
-.error {
-    color: red;
-    font-size: 13px;
-}
-</style>
+    .login-box {
+      background: white;
+      padding: 40px;
+      width: 350px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #004aad;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #003580;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="login-box">
+  <div class="login-box">
+    
+    <!-- Coloque aqui o brasão/logo da AGERSINOP -->
+    <img src="logo.png" alt="Brasão AGERSINOP">
 
-<img src="logo.png" alt="Brasão AGER" class="logo">
+    <h2>AGERSINOP</h2>
+    <p>Intranet do Órgão</p>
 
-<h2>AGER Sinop</h2>
-<p>Plataforma Institucional</p>
+    <input type="text" id="usuario" placeholder="Usuário">
+    <input type="password" id="senha" placeholder="Senha">
 
-<input type="text" id="username" placeholder="Usuário ou e-mail">
-<input type="password" id="password" placeholder="Senha">
-<button onclick="login()">Entrar</button>
+    <button onclick="login()">Entrar</button>
 
-<div class="forgot">
-    <a href="#" onclick="forgotPassword()">Esqueceu sua senha?</a>
-</div>
-
-<p class="error" id="errorMsg"></p>
-
-<div class="footer">
-Powered by <strong>Solutia</strong> • 2026
-</div>
-
-</div>
+    <div class="footer">
+      Powered by Solutia © 2026
+    </div>
+  </div>
 
 <script>
-
-// USUÁRIOS DE TESTE (PROTÓTIPO)
-const users = [
-    {
-        username: "amin.alves.jr@gmail.com",
-        password: "22042024",
-        role: "tenant_admin"
-    },
-    {
-        username: "diretoria",
-        password: "D1R3T0R14",
-        role: "diretoria"
-    },
-    {
-        username: "ouvidoria",
-        password: "0UV1D0R14",
-        role: "ouvidoria"
-    }
-];
-
 function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
 
-    const user = users.find(u => 
-        u.username === username && u.password === password
-    );
+  const usuarioDigitado = document.getElementById("usuario").value;
+  const senhaDigitada = document.getElementById("senha").value;
 
-    if (user) {
-        localStorage.setItem("loggedUser", JSON.stringify(user));
-        window.location.href = "dashboard.html";
-    } else {
-        document.getElementById("errorMsg").innerText = "Usuário ou senha inválidos.";
-    }
+  const usuarios = [
+    { usuario: "amin", senha: "amin123456", role: "admin" },
+    { usuario: "ligia", senha: "ligia123456", role: "fiscal" },
+    { usuario: "maristela", senha: "maristela123456", role: "operador" }
+    { usuario: "rayla", senha: "rayla123456", role: "operador" }
+  ];
+
+  const usuarioEncontrado = usuarios.find(u =>
+    u.usuario === usuarioDigitado && u.senha === senhaDigitada
+  );
+
+  if (usuarioEncontrado) {
+    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Usuário ou senha incorretos!");
+  }
 }
-
-function forgotPassword() {
-    alert("Recuperação de senha será enviada para o e-mail cadastrado (modo protótipo).");
-}
-
 </script>
 
 </body>
 </html>
+
 
 
 
