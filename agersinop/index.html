@@ -1,46 +1,143 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Login AGERSINOP</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGERSINOP - Login</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #0d3b66, #145da0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background: #ffffff;
+    width: 380px;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.logo {
+    width: 110px;
+    margin-bottom: 15px;
+}
+
+h2 {
+    margin: 10px 0;
+    color: #0d3b66;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 18px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #0d3b66;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0a2f52;
+}
+
+.footer {
+    margin-top: 25px;
+    font-size: 12px;
+    color: #777;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Login AGERSINOP</h2>
+<div class="login-container">
 
-<input type="text" id="usuario" placeholder="Usuario">
-<br><br>
-<input type="password" id="senha" placeholder="Senha">
-<br><br>
+    <!-- sua logo -->
+    <img src="logo.png" class="logo">
 
-<button onclick="login()">Entrar</button>
+    <h2>AGERSINOP</h2>
+    <p>Intranet do Orgão</p>
+
+    <input type="text" id="usuario" placeholder="Usuario">
+
+    <div class="password-wrapper">
+        <input type="password" id="senha" placeholder="Senha">
+        <span class="toggle-password" onclick="toggleSenha()">👁</span>
+    </div>
+
+    <button onclick="login()">Entrar</button>
+
+    <div class="footer">
+        Powered by Solutia © 2026
+    </div>
+
+</div>
 
 <script>
 function login() {
 
-  const usuario = document.getElementById("usuario").value;
-  const senha = document.getElementById("senha").value;
+    const usuario = document.getElementById("usuario").value;
+    const senha = document.getElementById("senha").value;
 
-  const usuarios = [
-    { usuario: "admin", senha: "123456", role: "admin" },
-    { usuario: "gestor", senha: "123456", role: "gestor" }
-  ];
+    const usuarios = [
+        { usuario: "admin", senha: "123456", role: "admin" },
+        { usuario: "gestor", senha: "123456", role: "gestor" }
+    ];
 
-  const usuarioEncontrado = usuarios.find(u =>
-    u.usuario === usuario && u.senha === senha
-  );
+    const usuarioEncontrado = usuarios.find(u =>
+        u.usuario === usuario && u.senha === senha
+    );
 
-  if (usuarioEncontrado) {
-    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
-    window.location.href = "dashboard.html";
-  } else {
-    alert("Usuario ou senha incorretos");
-  }
+    if (usuarioEncontrado) {
+        localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Usuario ou senha incorretos");
+    }
+}
+
+function toggleSenha() {
+    const campo = document.getElementById("senha");
+    campo.type = campo.type === "password" ? "text" : "password";
 }
 </script>
 
 </body>
 </html>
+
 
 
 
