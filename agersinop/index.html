@@ -1,19 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login AGERSINOP</title>
+</head>
 <body>
 
-<h1>TESTE SIMPLES</h1>
+<h2>Login AGERSINOP</h2>
 
-<button onclick="login()">Clique</button>
+<input type="text" id="usuario" placeholder="Usuario">
+<br><br>
+<input type="password" id="senha" placeholder="Senha">
+<br><br>
+
+<button onclick="login()">Entrar</button>
 
 <script>
 function login() {
-    alert("LOGIN FUNCIONANDO");
+
+  const usuario = document.getElementById("usuario").value;
+  const senha = document.getElementById("senha").value;
+
+  const usuarios = [
+    { usuario: "admin", senha: "123456", role: "admin" },
+    { usuario: "gestor", senha: "123456", role: "gestor" }
+  ];
+
+  const usuarioEncontrado = usuarios.find(u =>
+    u.usuario === usuario && u.senha === senha
+  );
+
+  if (usuarioEncontrado) {
+    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Usuario ou senha incorretos");
+  }
 }
 </script>
 
 </body>
 </html>
+
 
 
 
