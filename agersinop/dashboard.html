@@ -1,103 +1,77 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard | AGERSINOP</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Dashboard - AGERSINOP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 30px;
+    }
 
-<style>
-body {
-    font-family: Arial;
-    background: #f1f5f9;
-    padding: 40px;
-}
-.card {
-    background: white;
-    padding: 30px;
-    border-radius: 6px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-button {
-    padding: 10px 15px;
-    background: #1d4ed8;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.menu {
-    margin-top: 20px;
-    line-height: 1.8;
-}
-</style>
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #004aad;
+      color: white;
+      padding: 15px;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 8px 15px;
+      border: none;
+      background: white;
+      color: #004aad;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .content {
+      margin-top: 30px;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="card">
-    <h2>Dashboard Institucional - AGER Sinop</h2>
-    <p id="userInfo"></p>
-    <div class="menu" id="menu"></div>
-    <br>
+<script>
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  if (!usuarioLogado) {
+    window.location.href = "index.html";
+  }
+</script>
+
+<div class="topbar">
+  <div>
+    <strong>AGERSINOP - Intranet</strong>
+  </div>
+  <div>
+    Usuário: <span id="nomeUsuario"></span>
+    |
+    Perfil: <span id="perfilUsuario"></span>
+    |
     <button onclick="logout()">Sair</button>
+  </div>
+</div>
+
+<div class="content">
+  <h2>Bem-vindo ao sistema</h2>
+  <p>Área interna da AGERSINOP.</p>
 </div>
 
 <script>
+document.getElementById("nomeUsuario").innerText = usuarioLogado.usuario;
+document.getElementById("perfilUsuario").innerText = usuarioLogado.role;
 
-// 🔐 VERIFICA SE ESTÁ LOGADO
-const user = JSON.parse(localStorage.getItem("loggedUser"));
-
-if (!user) {
-    window.location.href = "index.html";
-}
-
-// 🔎 CONFIRMA SE É DO TENANT CORRETO
-if (user && user.tenant !== "agersinop") {
-    localStorage.removeItem("loggedUser");
-    window.location.href = "index.html";
-}
-
-// 🏢 INFORMAÇÕES DO USUÁRIO
-document.getElementById("userInfo").innerText =
-    "Logado como: " + user.username + " | Perfil: " + user.role;
-
-// 🎛️ MENU POR PERFIL
-let menuContent = "";
-
-if (user.role === "tenant_admin") {
-    menuContent = `
-        • Administração do Órgão<br>
-        • Gestão de Usuários<br>
-        • Relatórios Institucionais
-    `;
-}
-else if (user.role === "diretor") {
-    menuContent = `
-        • Dashboard Estratégico<br>
-        • Indicadores<br>
-        • Relatórios de Performance
-    `;
-}
-else if (user.role === "ouvidor") {
-    menuContent = `
-        • Gestão de Protocolos<br>
-        • Responder Ouvidoria<br>
-        • Encaminhamentos
-    `;
-}
-else {
-    menuContent = "• Área interna";
-}
-
-document.getElementById("menu").innerHTML = menuContent;
-
-// 🚪 LOGOUT
 function logout() {
-    localStorage.removeItem("loggedUser");
-    window.location.href = "index.html";
+  localStorage.removeItem("usuarioLogado");
+  window.location.href = "index.html";
 }
-
 </script>
 
 </body>
 </html>
+
