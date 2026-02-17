@@ -2,103 +2,19 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>AGERSINOP - Login</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .login-box {
-      background: white;
-      padding: 40px;
-      width: 350px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    img {
-      width: 120px;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #004aad;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #003580;
-    }
-
-    .footer {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #666;
-    }
-  </style>
+  <title>Login AGERSINOP</title>
 </head>
 <body>
 
-  <div class="login-box">
-    
-    <!-- Coloque aqui o brasão/logo da AGERSINOP -->
-    <img src="logo.png" alt="Brasão AGERSINOP">
+<h2>Login</h2>
 
-    <h2>AGERSINOP</h2>
-    <p>Intranet do Órgão</p>
-
-    <input type="text" id="usuario" placeholder="Usuário">
-    <input type="password" id="senha" placeholder="Senha">
-
-    <button onclick="login()">Entrar</button>
-
-    <div class="footer">
-      Powered by Solutia © 2026
-    </div>
-  </div>
+<input type="text" id="usuario" placeholder="Usuário">
+<input type="password" id="senha" placeholder="Senha">
+<button onclick="login()">Entrar</button>
 
 <script>
 function login() {
-
-  const usuarioDigitado = document.getElementById("usuario").value;
-  const senhaDigitada = document.getElementById("senha").value;
-
-  const usuarios = [
-    { usuario: "amin", senha: "amin123456", role: "admin" },
-    { usuario: "ligia", senha: "ligia123456", role: "fiscal" },
-    { usuario: "maristela", senha: "maristela123456", role: "operador" }
-    { usuario: "rayla", senha: "rayla123456", role: "operador" }
-  ];
-
-  const usuarioEncontrado = usuarios.find(u =>
-    u.usuario === usuarioDigitado && u.senha === senhaDigitada
-  );
-
-  if (usuarioEncontrado) {
-    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
-    window.location.href = "dashboard.html";
-  } else {
-    alert("Usuário ou senha incorretos!");
-  }
+    alert("Função carregada corretamente");
 }
 </script>
 
