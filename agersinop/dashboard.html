@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard | AGERSINOP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial;
+    background: #f1f5f9;
+    padding: 40px;
+}
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+button {
+    padding: 10px 15px;
+    background: #1d4ed8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.menu {
+    margin-top: 20px;
+    line-height: 1.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Dashboard Institucional - AGER Sinop</h2>
+    <p id="userInfo"></p>
+    <div class="menu" id="menu"></div>
+    <br>
+    <button onclick="logout()">Sair</button>
+</div>
+
+<script>
+
+// 🔐 VERIFICA SE ESTÁ LOGADO
+const user = JSON.parse(localStorage.getItem("loggedUser"));
+
+if (!user) {
+    window.location.href = "index.html";
+}
+
+// 🔎 CONFIRMA SE É DO TENANT CORRETO
+if (user && user.tenant !== "agersinop") {
+    localStorage.removeItem("loggedUser");
+    window.location.href = "index.html";
+}
+
+// 🏢 INFORMAÇÕES DO USUÁRIO
+document.getElementById("userInfo").innerText =
+    "Logado como: " + user.username + " | Perfil: " + user.role;
+
+// 🎛️ MENU POR PERFIL
+let menuContent = "";
+
+if (user.role === "tenant_admin") {
+    menuContent = `
+        • Administração do Órgão<br>
+        • Gestão de Usuários<br>
+        • Relatórios Institucionais
+    `;
+}
+else if (user.role === "diretor") {
+    menuContent = `
+        • Dashboard Estratégico<br>
+        • Indicadores<br>
+        • Relatórios de Performance
+    `;
+}
+else if (user.role === "ouvidor") {
+    menuContent = `
+        • Gestão de Protocolos<br>
+        • Responder Ouvidoria<br>
+        • Encaminhamentos
+    `;
+}
+else {
+    menuContent = "• Área interna";
+}
+
+document.getElementById("menu").innerHTML = menuContent;
+
+// 🚪 LOGOUT
+function logout() {
+    localStorage.removeItem("loggedUser");
+    window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
