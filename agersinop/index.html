@@ -1,130 +1,138 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>AGERSINOP | Acesso Restrito</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>AGER Sinop | Acesso Restrito</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f1f5f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .login-box {
-            background: #ffffff;
-            padding: 40px;
-            width: 100%;
-            max-width: 420px;
-            border-radius: 6px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-
-        .logo {
-            max-width: 110px;
-            margin-bottom: 15px;
-        }
-
-        h2 {
-            margin: 5px 0 20px 0;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 25px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #1d4ed8;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #1d4ed8;
-            border: none;
-            border-radius: 4px;
-            color: #ffffff;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background-color: #1e40af;
-        }
-
-        .forgot {
-            margin-top: 15px;
-            font-size: 13px;
-        }
-
-        .forgot a {
-            text-decoration: none;
-            color: #1d4ed8;
-        }
-
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .footer span {
-            font-weight: 600;
-            color: #1e293b;
-        }
-    </style>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-box {
+    background: white;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    text-align: center;
+}
+.logo {
+    max-width: 100px;
+    margin-bottom: 15px;
+}
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    background: #1d4ed8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: #1e40af;
+}
+.forgot {
+    margin-top: 10px;
+    font-size: 13px;
+}
+.footer {
+    margin-top: 25px;
+    font-size: 12px;
+    color: #64748b;
+}
+.error {
+    color: red;
+    font-size: 13px;
+}
+</style>
 </head>
 
 <body>
 
 <div class="login-box">
 
-    <!-- Brasão / Logo -->
-    <img src="logo.png" alt="Brasão AGER Sinop" class="logo">
+<img src="logo.png" alt="Brasão AGER" class="logo">
 
-    <h2>AGER Sinop</h2>
-    <div class="subtitle">
-        Plataforma Institucional – Acesso Restrito
-    </div>
+<h2>AGER Sinop</h2>
+<p>Plataforma Institucional</p>
 
-    <form>
-        <input type="text" placeholder="Usuário ou e-mail" required>
-        <input type="password" placeholder="Senha" required>
-        <button type="submit">Entrar</button>
-    </form>
+<input type="text" id="username" placeholder="Usuário ou e-mail">
+<input type="password" id="password" placeholder="Senha">
+<button onclick="login()">Entrar</button>
 
-    <div class="forgot">
-        <a href="#">Esqueceu sua senha?</a>
-    </div>
+<div class="forgot">
+    <a href="#" onclick="forgotPassword()">Esqueceu sua senha?</a>
+</div>
 
-    <div class="footer">
-        Powered by <span>Solutia</span> • 2026
-    </div>
+<p class="error" id="errorMsg"></p>
+
+<div class="footer">
+Powered by <strong>Solutia</strong> • 2026
+</div>
 
 </div>
 
+<script>
+
+// USUÁRIOS DE TESTE (PROTÓTIPO)
+const users = [
+    {
+        username: "amin.alves.jr@gmail.com",
+        password: "22042024",
+        role: "tenant_admin"
+    },
+    {
+        username: "diretoria",
+        password: "D1R3T0R14",
+        role: "diretoria"
+    },
+    {
+        username: "ouvidoria",
+        password: "0UV1D0R14",
+        role: "ouvidoria"
+    }
+];
+
+function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const user = users.find(u => 
+        u.username === username && u.password === password
+    );
+
+    if (user) {
+        localStorage.setItem("loggedUser", JSON.stringify(user));
+        window.location.href = "dashboard.html";
+    } else {
+        document.getElementById("errorMsg").innerText = "Usuário ou senha inválidos.";
+    }
+}
+
+function forgotPassword() {
+    alert("Recuperação de senha será enviada para o e-mail cadastrado (modo protótipo).");
+}
+
+</script>
+
 </body>
 </html>
+
 
 
