@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - AGERSINOP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Menu lateral */
+    .sidebar {
+      width: 250px;
+      background: #004aad;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar button {
+      padding: 10px 15px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 5px;
+      background: white;
+      color: #004aad;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    /* Área principal */
+    .main {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #004aad;
+      color: white;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .topbar button {
+      padding: 6px 12px;
+      border: none;
+      background: white;
+      color: #004aad;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .content {
+      margin-top: 20px;
+    }
+
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  if (!usuarioLogado) {
+    window.location.href = "index.html";
+  }
+</script>
+
+<!-- Menu lateral -->
+<div class="sidebar">
+  <h2>AGERSINOP</h2>
+  <strong>Raiz:</strong>
+  <button onclick="abrirModulo('AGERSINOP')">Pasta Raiz</button>
+  <strong>2026:</strong>
+  <button onclick="abrirModulo('2026','01_PROCESSOS_REGULATORIOS')">Processos Regulatórios</button>
+  <button onclick="abrirModulo('2026','02_OFICIOS_ENVIADOS')">Ofícios Enviados</button>
+  <button onclick="abrirModulo('2026','03_DOCUMENTOS_RECEBIDOS')">Documentos Recebidos</button>
+  <button onclick="abrirModulo('2026','04_PROCESSOS_OUVIDORIA')">Processos Ouvidoria</button>
+  <button onclick="abrirModulo('2026','05_TABELAS_DE_CONTROLE')">Tabelas de Controle</button>
+  <button onclick="abrirModulo('2026','06_RELATORIOS_TECNICOS')">Relatórios Técnicos</button>
+  <button onclick="abrirModulo('2026','07_CADASTROS_GIS')">Cadastros GIS</button>
+  <button onclick="abrirModulo('2026','08_PROJETOS_DWG')">Projetos DWG</button>
+</div>
+
+<!-- Área principal -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <img src="logo.png" alt="Logo AGERSINOP" style="height:40px; vertical-align:middle; margin-right:10px;">
+      <strong>Intranet AGERSINOP</strong>
+    </div>
+    <div>
+      Usuário: <span id="nomeUsuario"></span> |
+      Perfil: <span id="perfilUsuario"></span> |
+      <button onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>Bem-vindo ao sistema</h2>
+    <p>Área interna da AGERSINOP. Use o menu lateral para acessar os módulos.</p>
+  </div>
+
+  <footer>
+    Powered by Solutia 2026
+  </footer>
+</div>
+
+<script>
+  document.getElementById("nomeUsuario").innerText = usuarioLogado.usuario;
+  document.getElementById("perfilUsuario").innerText = usuarioLogado.role;
+
+  function logout() {
+    localStorage.removeItem("usuarioLogado");
+    window.location.href = "index.html";
+  }
+
+  // Links do OneDrive (substitua pelos links do seu TXT)
+  const linksOneDrive = {
+    "AGERSINOP": "https://1drv.ms/f/c/dce577348cb67d92/IgDOa83XarN3QLhqqvdB9lmNASJ6ycP1gxJxE8m8xxDclQo?e=xZlY35",
+    "2026": {
+      "01_PROCESSOS_REGULATORIOS": "https://1drv.ms/f/c/dce577348cb67d92/IgCi80L0f2yHTbYVaR0HVstiARy-zsnrwC4Is-6s7C0MDcQ?e=rWpNl4",
+      "02_OFICIOS_ENVIADOS": "https://1drv.ms/f/c/dce577348cb67d92/IgByMrokrXx8QJhNQi5TH-PQAZgscJgelGq0ojXk_dOnpcY?e=twZFab",
+      "03_DOCUMENTOS_RECEBIDOS": "https://1drv.ms/f/c/dce577348cb67d92/IgBfmHSLykK5Taz_jsmiBL89AROlft0CCiOqWF_QDu4egPg?e=pchITF",
+      "04_PROCESSOS_OUVIDORIA": "https://1drv.ms/f/c/dce577348cb67d92/IgA4d1xRkE6uQYku1QeAM99kARuanXKiWLjEQp8EuMpmrOQ?e=JdUdaE",
+      "05_TABELAS_DE_CONTROLE": "https://1drv.ms/f/c/dce577348cb67d92/IgA4d1xRkE6uQYku1QeAM99kARuanXKiWLjEQp8EuMpmrOQ?e=JdUdaE",
+      "06_RELATORIOS_TECNICOS": "https://1drv.ms/f/c/dce577348cb67d92/IgA4d1xRkE6uQYku1QeAM99kARuanXKiWLjEQp8EuMpmrOQ?e=JdUdaE",
+      "07_CADASTROS_GIS": "https://1drv.ms/f/c/dce577348cb67d92/IgBosOM0FaDVSJzjwkHaM86AAUnggySyNmmgI6EX8I5fH1c?e=KF6FAV",
+      "08_PROJETOS_DWG": "https://1drv.ms/f/c/dce577348cb67d92/IgCKME6cbIHyTKPqwDiVvvz3AZsbYfovEKcEuu46-e-hwFc?e=pwmmTF"
+    }
+  };
+
+  function abrirModulo(ano, modulo) {
+    let link;
+    if(modulo) {
+      link = linksOneDrive[ano][modulo];
+    } else {
+      link = linksOneDrive[ano]; // Para AGERSINOP raiz
+    }
+
+    if(link) {
+      window.open(link, "_blank");
+    } else {
+      alert("Link do módulo não configurado!");
+    }
+  }
+</script>
+
+</body>
+</html>
+
