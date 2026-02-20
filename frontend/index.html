@@ -93,14 +93,12 @@ button:hover {
 
 <div class="login-container">
 
-    <!-- Logo dinâmica -->
     <img id="orgao-logo" class="logo" alt="Logo do órgão">
 
-    <!-- Nome dinâmico -->
     <h2 id="orgao-nome"></h2>
     <p>Intranet do Órgão</p>
 
-    <input type="text" id="usuario" placeholder="CPF ou Usuário">
+    <input type="email" id="usuario" placeholder="Email">
 
     <div class="password-wrapper">
         <input type="password" id="senha" placeholder="Senha">
@@ -117,31 +115,38 @@ button:hover {
 
 <script src="js/tenant.js"></script>
 
-<script>
-function login() {
+<!-- 🔥 SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    const usuario = document.getElementById("usuario").value;
+<script>
+
+// 🔥 COLE SUA ANON KEY AQUI
+const SUPABASE_URL = "https://fzxhhmklosdowjaztjuy.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6eGhobWtsb3Nkb3dqYXp0anV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MDI0MzIsImV4cCI6MjA4NzE3ODQzMn0.pInQANuUh-G4PKEwLRTqmyYZHf0NTqp4SQPJuykwQeU";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function login() {
+
+    const email = document.getElementById("usuario").value;
     const senha = document.getElementById("senha").value;
 
-    if (!usuario || !senha) {
+    if (!email || !senha) {
         alert("Preencha todos os campos");
         return;
     }
 
-    // 🔥 FUTURO: chamada real ao backend
-    /*
-    fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usuario, senha })
-    })
-    */
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: senha
+    });
 
-    // TEMPORÁRIO (apenas para navegação)
-    localStorage.setItem("usuarioLogado", JSON.stringify({
-        usuario: usuario,
-        role: "usuario"
-    }));
+    if (error) {
+        alert("Erro no login: " + error.message);
+        return;
+    }
+
+    localStorage.setItem("usuarioLogado", JSON.stringify(data.user));
 
     window.location.href = "dashboard.html";
 }
@@ -150,11 +155,11 @@ function toggleSenha() {
     const campo = document.getElementById("senha");
     campo.type = campo.type === "password" ? "text" : "password";
 }
+
 </script>
 
 </body>
 </html>
-
 
 
 
