@@ -3,14 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A.M.I. - Login</title>
-<link rel="icon" type="image/png" href="logo.png">
+
+<title>SOLUTI - Login</title>
+
+<link rel="stylesheet" href="assets/css/style.css">
 
 <style>
+:root {
+    --cor-primaria: #0d3b66;
+    --cor-secundaria: #145da0;
+}
+
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background: linear-gradient(135deg, #0d3b66, #145da0);
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,7 +40,7 @@ body {
 
 h2 {
     margin: 10px 0;
-    color: #0d3b66;
+    color: var(--cor-primaria);
 }
 
 input {
@@ -62,7 +69,7 @@ button {
     width: 100%;
     padding: 12px;
     margin-top: 20px;
-    background-color: #0d3b66;
+    background-color: var(--cor-primaria);
     color: white;
     border: none;
     border-radius: 6px;
@@ -71,7 +78,7 @@ button {
 }
 
 button:hover {
-    background-color: #0a2f52;
+    opacity: 0.9;
 }
 
 .footer {
@@ -86,13 +93,14 @@ button:hover {
 
 <div class="login-container">
 
-    <!-- sua logo -->
-    <img src="logo.png" class="logo">
+    <!-- Logo dinâmica -->
+    <img id="orgao-logo" class="logo" alt="Logo do órgão">
 
-    <h2>A.M.I.</h2>
-    <p>Intranet do Orgão</p>
+    <!-- Nome dinâmico -->
+    <h2 id="orgao-nome"></h2>
+    <p>Intranet do Órgão</p>
 
-    <input type="text" id="usuario" placeholder="Usuario">
+    <input type="text" id="usuario" placeholder="CPF ou Usuário">
 
     <div class="password-wrapper">
         <input type="password" id="senha" placeholder="Senha">
@@ -102,10 +110,12 @@ button:hover {
     <button onclick="login()">Entrar</button>
 
     <div class="footer">
-        Powered by Solutia © 2026
+        Powered by Soluti © 2026
     </div>
 
 </div>
+
+<script src="js/tenant.js"></script>
 
 <script>
 function login() {
@@ -113,21 +123,27 @@ function login() {
     const usuario = document.getElementById("usuario").value;
     const senha = document.getElementById("senha").value;
 
-    const usuarios = [
-        { usuario: "aminadalb", senha: "salmo8318", role: "admin" },
-        { usuario: "regulacao", senha: "123456", role: "gestor" }
-    ];
-
-    const usuarioEncontrado = usuarios.find(u =>
-        u.usuario === usuario && u.senha === senha
-    );
-
-    if (usuarioEncontrado) {
-        localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Usuario ou senha incorretos");
+    if (!usuario || !senha) {
+        alert("Preencha todos os campos");
+        return;
     }
+
+    // 🔥 FUTURO: chamada real ao backend
+    /*
+    fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario, senha })
+    })
+    */
+
+    // TEMPORÁRIO (apenas para navegação)
+    localStorage.setItem("usuarioLogado", JSON.stringify({
+        usuario: usuario,
+        role: "usuario"
+    }));
+
+    window.location.href = "dashboard.html";
 }
 
 function toggleSenha() {
