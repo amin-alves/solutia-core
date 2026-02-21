@@ -32,12 +32,12 @@
 <script src="js/tenant.js"></script>
 
 <script>
-// Supabase
+// 🔥 Supabase
 const SUPABASE_URL = "https://fzxhhmklosdowjaztjuy.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6eGhobWtsb3Nqb…"; // sua anon key
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_ANON_KEY = "COLE_AQUI_SUA_CHAVE_COMPLETA"; 
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Login
+// 🔥 Login
 async function login() {
     const email = document.getElementById("usuario").value;
     const senha = document.getElementById("senha").value;
@@ -78,10 +78,13 @@ function toggleSenha() {
     const campo = document.getElementById("senha");
     campo.type = campo.type === "password" ? "text" : "password";
 }
+
+// 🔥 Carregar logo e nome do tenant
+if(window.tenant) {
+    document.getElementById("orgao-logo").src = tenant.logo;
+    document.getElementById("orgao-nome").innerText = tenant.nome;
+}
 </script>
+
 </body>
 </html>
-
-
-
-
