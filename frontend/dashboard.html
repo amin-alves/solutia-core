@@ -1,215 +1,37 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOLUTI - Dashboard</title>
-
-<style>
-:root {
-  --cor-primaria: #004aad;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
-  margin: 0;
-  display: flex;
-  height: 100vh;
-}
-
-/* SIDEBAR */
-.sidebar {
-  width: 260px;
-  background: var(--cor-primaria);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
-
-.sidebar h2 {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.sidebar button {
-  padding: 10px 15px;
-  margin: 5px 0;
-  border: none;
-  border-radius: 6px;
-  background: white;
-  color: var(--cor-primaria);
-  cursor: pointer;
-  text-align: left;
-  font-weight: 500;
-}
-
-.sidebar button:hover {
-  opacity: 0.9;
-}
-
-/* MAIN AREA */
-.main {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--cor-primaria);
-  color: white;
-  padding: 15px 20px;
-  border-radius: 8px;
-}
-
-.topbar-left {
-  display: flex;
-  align-items: center;
-}
-
-.logo-topbar {
-  height: 40px;
-  margin-right: 10px;
-}
-
-.user-info {
-  font-size: 14px;
-}
-
-.topbar button {
-  padding: 6px 12px;
-  border: none;
-  background: white;
-  color: var(--cor-primaria);
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.content {
-  margin-top: 25px;
-}
-
-.content h2 {
-  margin-bottom: 10px;
-}
-
-footer {
-  margin-top: auto;
-  text-align: center;
-  color: #777;
-  font-size: 13px;
-  padding-top: 20px;
-}
-</style>
-</head>
-<body>
-
 <script>
-/* Proteção de sessão */
 const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 if (!usuarioLogado) {
+  console.warn("Nenhum usuário logado, redirecionando...");
   window.location.href = "index.html";
+} else {
+  console.log("Usuário logado:", usuarioLogado);
 }
-</script>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <h2 id="orgao-nome-sidebar"></h2>
-
-  <strong>Raiz</strong>
-  <button onclick="abrirModulo('AGERSINOP')">Pasta Raiz</button>
-
-  <strong>2026</strong>
-  <button onclick="abrirModulo('2026','01_PROCESSOS_REGULATORIOS')">Processos Regulatórios</button>
-  <button onclick="abrirModulo('2026','02_OFICIOS_ENVIADOS')">Ofícios Enviados</button>
-  <button onclick="abrirModulo('2026','03_DOCUMENTOS_RECEBIDOS')">Documentos Recebidos</button>
-  <button onclick="abrirModulo('2026','04_PROCESSOS_OUVIDORIA')">Processos Ouvidoria</button>
-  <button onclick="abrirModulo('2026','05_TABELAS_DE_CONTROLE')">Tabelas de Controle</button>
-  <button onclick="abrirModulo('2026','06_RELATORIOS_TECNICOS')">Relatórios Técnicos</button>
-  <button onclick="abrirModulo('2026','07_CADASTROS_GIS')">Cadastros GIS</button>
-  <button onclick="abrirModulo('2026','08_PROJETOS_DWG')">Projetos DWG</button>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-  <div class="topbar">
-    <div class="topbar-left">
-      <img id="orgao-logo-topbar" class="logo-topbar" alt="Logo do órgão">
-      <strong id="orgao-nome-topbar"></strong>
-    </div>
-
-    <div class="user-info">
-      Usuário: <span id="nomeUsuario"></span> |
-      Perfil: <span id="perfilUsuario"></span> |
-      <button onclick="logout()">Sair</button>
-    </div>
-  </div>
-
-  <div class="content">
-    <h2>Bem-vindo ao sistema</h2>
-    <p>Área interna do órgão. Utilize o menu lateral para acessar os módulos disponíveis.</p>
-  </div>
-
-  <footer>
-    Powered by Soluti © 2026
-  </footer>
-</div>
-
-<!-- JS -->
-<script src="js/tenant.js"></script>
-<script>
-/* Preenche usuário */
+// Preencher usuário
 document.getElementById("nomeUsuario").innerText = usuarioLogado.email || usuarioLogado.user_metadata?.email || usuarioLogado.usuario;
 document.getElementById("perfilUsuario").innerText = usuarioLogado.role || "usuario";
 
-/* Preenche logo/nome multi-tenant */
-const logoTopbar = document.getElementById("orgao-logo-topbar");
-const nomeTopbar = document.getElementById("orgao-nome-topbar");
-const nomeSidebar = document.getElementById("orgao-nome-sidebar");
-
-if(window.tenant) {
-  logoTopbar.src = tenant.logo;
-  nomeTopbar.innerText = tenant.nome;
-  nomeSidebar.innerText = tenant.nome;
+// Multi-tenant
+if (window.tenant) {
+    document.getElementById("orgao-logo-topbar").src = tenant.logo;
+    document.getElementById("orgao-nome-topbar").innerText = tenant.nome;
+    document.getElementById("orgao-nome-sidebar").innerText = tenant.nome;
+} else {
+    console.warn("Tenant não definido!");
 }
 
-/* Logout */
-function logout() {
-  localStorage.removeItem("usuarioLogado");
-  window.location.href = "index.html";
-}
-
-/* Links OneDrive por módulo */
-const linksOneDrive = {
-  "AGERSINOP": "https://1drv.ms/f/c/dce577348cb67d92/IgDOa83XarN3QLhqqvdB9lmNASJ6ycP1gxJxE8m8xxDclQo?e=xZlY35",
-  "2026": {
-    "01_PROCESSOS_REGULATORIOS": "https://1drv.ms/f/c/dce577348cb67d92/IgCi80L0f2yHTbYVaR0HVstiARy-zsnrwC4Is-6s7C0MDcQ?e=h0OZ0J",
-    "02_OFICIOS_ENVIADOS": "https://1drv.ms/f/c/dce577348cb67d92/IgByMrokrXx8QJhNQi5TH-PQAZgscJgelGq0ojXk_dOnpcY?e=twZFab",
-    "03_DOCUMENTOS_RECEBIDOS": "https://1drv.ms/f/c/dce577348cb67d92/IgBfmHSLykK5Taz_jsmiBL89AROlft0CCiOqWF_QDu4egPg?e=pchITF",
-    "04_PROCESSOS_OUVIDORIA": "https://1drv.ms/f/c/dce577348cb67d92/IgA4d1xRkE6uQYku1QeAM99kARuanXKiWLjEQp8EuMpmrOQ?e=JdUdaE",
-    "05_TABELAS_DE_CONTROLE": "https://1drv.ms/f/c/dce577348cb67d92/IgA4d1xRkE6uQYku1QeAM99kARuanXKiWLjEQp8EuMpmrOQ?e=JdUdaE",
-    "06_RELATORIOS_TECNICOS": "https://1drv.ms/f/c/dce577348cb67d92/IgA4d1xRkE6uQYku1QeAM99kARuanXKiWLjEQp8EuMpmrOQ?e=JdUdaE",
-    "07_CADASTROS_GIS": "https://1drv.ms/f/c/dce577348cb67d92/IgBosOM0FaDVSJzjwkHaM86AAUnggySyNmmgI6EX8I5fH1c?e=KF6FAV",
-    "08_PROJETOS_DWG": "https://1drv.ms/f/c/dce577348cb67d92/IgCKME6cbIHyTKPqwDiVvvz3AZsbYfovEKcEuu46-e-hwFc?e=pwmmTF"
-  }
-};
-
-/* Função abrir módulo */
+// Abrir módulo com logs
 function abrirModulo(ano, modulo) {
-  let link = null;
-  if(modulo) link = linksOneDrive[ano]?.[modulo];
-  else link = linksOneDrive[ano];
+    let link = null;
+    if (modulo) link = linksOneDrive[ano]?.[modulo];
+    else link = linksOneDrive[ano];
 
-  if(link) window.open(link, "_blank", "noopener,noreferrer");
-  else alert("Link do módulo não configurado!");
+    if(link) {
+        console.log("Abrindo link:", link);
+        window.open(link, "_blank", "noopener,noreferrer");
+    } else {
+        console.error("Link do módulo não configurado!", ano, modulo);
+        alert("Link do módulo não configurado!");
+    }
 }
 </script>
-
-</body>
-</html>
