@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>SOLUTI - Dashboard</title>
 
 <style>
@@ -108,11 +107,10 @@ footer {
 }
 </style>
 </head>
-
 <body>
 
 <script>
-/* Proteção básica de sessão */
+/* Proteção de sessão */
 const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 if (!usuarioLogado) {
   window.location.href = "index.html";
@@ -163,12 +161,23 @@ if (!usuarioLogado) {
   </footer>
 </div>
 
+<!-- JS -->
 <script src="js/tenant.js"></script>
-
 <script>
 /* Preenche usuário */
-document.getElementById("nomeUsuario").innerText = usuarioLogado.usuario;
-document.getElementById("perfilUsuario").innerText = usuarioLogado.role;
+document.getElementById("nomeUsuario").innerText = usuarioLogado.email || usuarioLogado.user_metadata?.email || usuarioLogado.usuario;
+document.getElementById("perfilUsuario").innerText = usuarioLogado.role || "usuario";
+
+/* Preenche logo/nome multi-tenant */
+const logoTopbar = document.getElementById("orgao-logo-topbar");
+const nomeTopbar = document.getElementById("orgao-nome-topbar");
+const nomeSidebar = document.getElementById("orgao-nome-sidebar");
+
+if(window.tenant) {
+  logoTopbar.src = tenant.logo;
+  nomeTopbar.innerText = tenant.nome;
+  nomeSidebar.innerText = tenant.nome;
+}
 
 /* Logout */
 function logout() {
@@ -176,7 +185,7 @@ function logout() {
   window.location.href = "index.html";
 }
 
-/* Links OneDrive - AMI */
+/* Links OneDrive por módulo */
 const linksOneDrive = {
   "AGERSINOP": "https://1drv.ms/f/c/dce577348cb67d92/IgDOa83XarN3QLhqqvdB9lmNASJ6ycP1gxJxE8m8xxDclQo?e=xZlY35",
   "2026": {
@@ -194,21 +203,13 @@ const linksOneDrive = {
 /* Função abrir módulo */
 function abrirModulo(ano, modulo) {
   let link = null;
+  if(modulo) link = linksOneDrive[ano]?.[modulo];
+  else link = linksOneDrive[ano];
 
-  if (modulo) {
-    link = linksOneDrive[ano]?.[modulo];
-  } else {
-    link = linksOneDrive[ano];
-  }
-
-  if (link) {
-    window.open(link, "_blank", "noopener,noreferrer");
-  } else {
-    alert("Link do módulo não configurado!");
-  }
+  if(link) window.open(link, "_blank", "noopener,noreferrer");
+  else alert("Link do módulo não configurado!");
 }
 </script>
 
 </body>
 </html>
-
