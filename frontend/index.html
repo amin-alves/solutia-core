@@ -4,92 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SOLUTI - Login</title>
-
-<style>
-:root {
-    --cor-primaria: #0d3b66;
-    --cor-secundaria: #145da0;
-}
-
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.login-container {
-    background: #ffffff;
-    width: 380px;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    text-align: center;
-}
-
-.logo {
-    width: 110px;
-    margin-bottom: 15px;
-}
-
-h2 {
-    margin: 10px 0;
-    color: var(--cor-primaria);
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-}
-
-.password-wrapper {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 10px;
-    top: 18px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #555;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 20px;
-    background-color: var(--cor-primaria);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-.footer {
-    margin-top: 25px;
-    font-size: 12px;
-    color: #777;
-}
-</style>
-
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <div class="login-container">
-
     <img id="orgao-logo" class="logo" alt="Logo do órgão">
     <h2 id="orgao-nome"></h2>
     <p>Intranet do Órgão</p>
@@ -106,29 +25,20 @@ button:hover {
     <div class="footer">
         Powered by Soluti © 2026
     </div>
-
 </div>
 
-<!-- Tenant multi-órgão -->
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/tenant.js"></script>
+
 <script>
-window.tenant = {
-    nome: "A.M.I.",
-    logo: "logos/ami.png",
-};
-document.getElementById("orgao-logo").src = tenant.logo;
-document.getElementById("orgao-nome").innerText = tenant.nome;
-</script>
-
-<!-- Supabase v2 -->
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.js';
-
+// Supabase
 const SUPABASE_URL = "https://fzxhhmklosdowjaztjuy.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6eGhobWtsb3dqYXp0anV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MDI0MzIsImV4cCI6MjA4NzE3ODQzMn0.pInQANuUh-G4PKEwLRTqmyYZHf0NTqp4SQPJuykwQeU";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6eGhobWtsb3Nqb…"; // sua anon key
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-window.login = async function() {
+// Login
+async function login() {
     const email = document.getElementById("usuario").value;
     const senha = document.getElementById("senha").value;
 
@@ -137,26 +47,40 @@ window.login = async function() {
         return;
     }
 
+    console.log("Tentando login com:", email);
+
     try {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
-        if (error) throw error;
 
+        if (error) {
+            console.error("Erro Supabase:", error);
+            alert("Erro no login: " + error.message);
+            return;
+        }
+
+        if (!data.user) {
+            console.warn("Usuário retornado é null ou undefined");
+            alert("Falha ao recuperar dados do usuário.");
+            return;
+        }
+
+        console.log("Login bem-sucedido:", data.user);
         localStorage.setItem("usuarioLogado", JSON.stringify(data.user));
         window.location.href = "dashboard.html";
+
     } catch (err) {
-        alert("Erro no login: " + err.message);
+        console.error("Erro inesperado:", err);
+        alert("Erro inesperado: " + err.message);
     }
 }
 
-window.toggleSenha = function() {
+function toggleSenha() {
     const campo = document.getElementById("senha");
     campo.type = campo.type === "password" ? "text" : "password";
 }
 </script>
-
 </body>
 </html>
-
 
 
 
