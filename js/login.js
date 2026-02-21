@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
     // VALIDAR CONFIG DO CLIENTE
     // ==============================
-    const clienteAtual = clientesConfig[subdominio] || clientesConfig["cliente1"];
+    const clienteAtual = CONFIG_CLIENTES[subdominio] || CONFIG_CLIENTES["cliente1"];
     if (!clienteAtual) {
         alert("Cliente não configurado.");
         return;
@@ -57,8 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 🔒 Validação segura: encontra usuário
-        const usuarioValido = usuarios.find(u => u.email === email && u.senha === senha);
+        // 🔒 Validação segura: encontra usuário e verifica o cliente
+        const usuarioValido = usuarios.find(u => u.email === email && u.senha === senha && u.cliente === subdominio);
 
         if (!usuarioValido) {
             document.getElementById("msgErro").innerText = "Usuário ou senha incorretos";

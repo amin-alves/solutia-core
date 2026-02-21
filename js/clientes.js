@@ -3,7 +3,7 @@ const CONFIG_CLIENTES = {
 
     cliente1: {
         nome: "Empresa Alpha",
-        logo: "assets/img/logo_alpha.png", // substitua pela sua logo real
+        logo: "assets/logos/cliente1.png", // substitua pela sua logo real
         corPrimaria: "#1f2d3d",
         corSecundaria: "#16222f",
         tema: {
@@ -21,7 +21,7 @@ const CONFIG_CLIENTES = {
 
     cliente2: {
         nome: "Tribunal Beta",
-        logo: "assets/img/logo_beta.png", // substitua pela sua logo real
+        logo: "assets/logos/cliente2.png", // substitua pela sua logo real
         corPrimaria: "#37225f",
         corSecundaria: "#2a1747",
         tema: {
