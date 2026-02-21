@@ -93,8 +93,8 @@ button:hover {
 
 <div class="login-container">
 
+    <!-- Logo e nome dinâmicos via tenant.js -->
     <img id="orgao-logo" class="logo" alt="Logo do órgão">
-
     <h2 id="orgao-nome"></h2>
     <p>Intranet do Órgão</p>
 
@@ -113,21 +113,20 @@ button:hover {
 
 </div>
 
+<!-- Tenant.js: detecta órgão pelo subdomínio -->
 <script src="js/tenant.js"></script>
 
-<!-- 🔥 SUPABASE -->
+<!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-
-// 🔥 COLE SUA ANON KEY AQUI
+// 🔥 CONFIGURAÇÃO SUPABASE
 const SUPABASE_URL = "https://fzxhhmklosdowjaztjuy.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6eGhobWtsb3Nkb3dqYXp0anV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MDI0MzIsImV4cCI6MjA4NzE3ODQzMn0.pInQANuUh-G4PKEwLRTqmyYZHf0NTqp4SQPJuykwQeU";
-
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// 🔥 FUNÇÃO DE LOGIN
 async function login() {
-
     const email = document.getElementById("usuario").value;
     const senha = document.getElementById("senha").value;
 
@@ -136,26 +135,28 @@ async function login() {
         return;
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: senha
-    });
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: senha
+        });
 
-    if (error) {
-        alert("Erro no login: " + error.message);
-        return;
+        if (error) throw error;
+
+        // Login bem-sucedido → salva usuário e redireciona
+        localStorage.setItem("usuarioLogado", JSON.stringify(data.user));
+        window.location.href = "dashboard.html";
+
+    } catch (err) {
+        alert("Erro no login: " + err.message);
     }
-
-    localStorage.setItem("usuarioLogado", JSON.stringify(data.user));
-
-    window.location.href = "dashboard.html";
 }
 
+// Mostrar/ocultar senha
 function toggleSenha() {
     const campo = document.getElementById("senha");
     campo.type = campo.type === "password" ? "text" : "password";
 }
-
 </script>
 
 </body>
