@@ -3,11 +3,9 @@
 // ==============================
 function obterSubdominio() {
     const urlRaw = window.location.search || window.location.href; // Busca forçada na Query String
-    console.log("[CRITICAL_DEBUG_DASHBOARD] RAW URL:", urlRaw);
 
     // Remove codificações e pega só os caracteres alfanuméricos
     const urlLimpa = decodeURIComponent(urlRaw).toLowerCase().replace(/[^a-z0-9]/g, '');
-    console.log("[CRITICAL_DEBUG_DASHBOARD] CLEAN URL:", urlLimpa);
 
     if (urlLimpa.includes("stoantleste")) return "stoantleste";
     if (urlLimpa.includes("agersinop")) return "agersinop";
@@ -102,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Mostra nome do cliente no topo
     const nomeClienteEl = document.getElementById("nomeCliente");
     if (nomeClienteEl) {
-        nomeClienteEl.innerText = `${config.nome} (Sessão: ${sessao.cliente} | Debug: ${clienteAtualSubdominio})`;
+        nomeClienteEl.innerText = config.nome;
     }
 
     // Mostra o nome e nível do usuário
@@ -204,7 +202,7 @@ function montarEstruturaPastas(pastas) {
                         case 'img':
                             // Renderiza nativamente no navegador
                             iframeSrc = arquivo.url;
-                            htmlPreview = `<iframe src="${iframeSrc}" width="100%" height="100%" style="border:none;"></iframe>`;
+                            htmlPreview = `< iframe src = "${iframeSrc}" width = "100%" height = "100%" style = "border:none;" ></iframe > `;
                             break;
 
                         case 'docx':

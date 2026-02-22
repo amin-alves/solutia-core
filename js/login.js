@@ -39,11 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
     function obterSubdominio() {
         const urlRaw = window.location.search || window.location.href; // Busca forçada na Query String
-        console.log("[CRITICAL_DEBUG] RAW URL:", urlRaw);
 
         // Remove codificações e pega só os caracteres alfanuméricos
         const urlLimpa = decodeURIComponent(urlRaw).toLowerCase().replace(/[^a-z0-9]/g, '');
-        console.log("[CRITICAL_DEBUG] CLEAN URL ALPHANUMERIC:", urlLimpa);
 
         if (urlLimpa.includes("stoantleste")) return "stoantleste";
         if (urlLimpa.includes("agersinop")) return "agersinop";
@@ -75,9 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const nomeClienteEl = document.getElementById("nomeCliente");
     if (nomeClienteEl) {
         nomeClienteEl.innerText = clienteAtual.nome;
-        // INJETAR O DEBUG DE URL DIRETAMENTE NO TÍTULO PARA VERMOS SE A LEITURA FUNCIONA
-        nomeClienteEl.innerText += ` (Diagnostic: ${subdominio})`;
-        nomeClienteEl.style.fontSize = "18px";
     }
 
     const logoEl = document.getElementById("logoCliente");
