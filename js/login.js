@@ -38,12 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // IDENTIFICAR CLIENTE PELO DOMÍNIO OU QUERY STRING
     // ==============================
     function obterSubdominio() {
-        // 1. (PRIORIDADE) Tenta ler cliente da URL query string (ex: ?cliente=agersinop)
-        const params = new URLSearchParams(window.location.search);
-        const clienteURL = params.get("cliente");
+        // 1. (PRIORIDADE) Tenta ler cliente da URL de forma robusta, ignorando codificações como %3D
+        const urlCompleta = window.location.href.toLowerCase();
+        let clienteEncontrado = null;
 
-        if (clienteURL && CONFIG_CLIENTES[clienteURL]) {
-            return clienteURL;
+        if (urlCompleta.includes("agersinop")) clienteEncontrado = "agersinop";
+        if (urlCompleta.includes("stoantleste")) clienteEncontrado = "stoantleste";
+
+        if (clienteEncontrado) {
+            return clienteEncontrado;
         }
 
         // 2. Tenta identificar pelo domínio atual do navegador (Retrocompatibilidade)

@@ -6,16 +6,13 @@
 // pela URL do navegador (ex: regulasnp-solutiacore.vercel.app -> cliente1)
 // ==============================
 const MAPA_DOMINIOS = {
-    // Vercel Free Tier (com hífen) / Configurações locais
-    "localhost": "cliente1",
-    "127.0.0.1": "cliente1",
-    "regulasnp-solutiacore.vercel.app": "cliente1",
+    // Ambientes Locais
+    "localhost": "agersinop",
+    "127.0.0.1": "agersinop",
 
-    // Domínio próprio (aceita ponto antes e depois do subdomínio)
-    // "regulasnp.seudominio.com.br": "cliente1",
-
-    // Cliente 2 no Vercel (sem domínio próprio)
-    "tribunalbeta-solutiacore.vercel.app": "cliente2"
+    // Domínio principal no Vercel
+    // Se a pessoa entrar direto sem o ?cliente= na URL
+    "ami-eng.vercel.app": "agersinop"
 };
 
 const CONFIG_CLIENTES = {

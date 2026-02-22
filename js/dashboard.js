@@ -2,12 +2,15 @@
 // IDENTIFICAR CLIENTE PELO DOMÍNIO OU QUERY STRING
 // ==============================
 function obterSubdominio() {
-    // 1. (PRIORIDADE) Tenta ler cliente da URL: ?cliente=agersinop
-    const params = new URLSearchParams(window.location.search);
-    const clienteURL = params.get("cliente");
-    // Verifica se o cliente da URL existe nas nossas chaves
-    if (clienteURL && typeof CONFIG_CLIENTES !== 'undefined' && CONFIG_CLIENTES[clienteURL]) {
-        return clienteURL;
+    // 1. (PRIORIDADE) Tenta ler cliente da URL de forma robusta, ignorando codificações como %3D
+    const urlCompleta = window.location.href.toLowerCase();
+    let clienteEncontrado = null;
+
+    if (urlCompleta.includes("agersinop")) clienteEncontrado = "agersinop";
+    if (urlCompleta.includes("stoantleste")) clienteEncontrado = "stoantleste";
+
+    if (clienteEncontrado) {
+        return clienteEncontrado;
     }
 
     // 2. Tenta identificar pelo domínio atual do navegador
