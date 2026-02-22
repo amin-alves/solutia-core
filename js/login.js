@@ -40,24 +40,27 @@ document.addEventListener("DOMContentLoaded", () => {
     function obterSubdominio() {
         // 1. Decodifica manualmente qualquer coisa que os navegadores injetam
         const urlCompleta = window.location.href.toLowerCase().replace(/%3d/g, '=').replace(/%26/g, '&');
-        let clienteEncontrado = null;
+        console.log("[DEBUG] URL AVALIADA:", urlCompleta);
 
-        if (urlCompleta.includes("agersinop")) clienteEncontrado = "agersinop";
-        if (urlCompleta.includes("stoantleste")) clienteEncontrado = "stoantleste";
-
-        if (clienteEncontrado) {
-            return clienteEncontrado;
-        }
+        // Verifica as chaves diretamente
+        if (urlCompleta.includes("agersinop")) return "agersinop";
+        if (urlCompleta.includes("stoantleste")) return "stoantleste";
 
         // 2. Tenta identificar pelo domínio atual do navegador (Retrocompatibilidade)
         const hostnameAtual = window.location.hostname;
+        console.log("[DEBUG] HOSTNAME MAPPING:", hostnameAtual);
+
         if (typeof MAPA_DOMINIOS !== 'undefined') {
             const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
             if (clienteMapeado) {
+                // Se o dominio for ami-eng.vercel.app, nós só redirecionamos SE
+                // não houver nenhum path de cliente.
+                // Mas, como isso estava forçando "agersinop" sempre, vamos evitar fallback falso.
                 return clienteMapeado;
             }
         }
 
+        console.log("[DEBUG] NENHUM CLIENTE ACHADO, CAINDO NO FALLBACK");
         return "agersinop"; // fallback final para cliente padrão
     }
 
