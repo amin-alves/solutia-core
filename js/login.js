@@ -46,40 +46,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const subdominio = obterSubdominio();
 
     // ==============================
-    // VALIDAR CONFIG DO CLIENTE
+    // APLICAR IDENTIDADE VISUAL IMEDIATAMENTE VIA SUPABASE
     // ==============================
-    const clienteAtual = CONFIG_CLIENTES[subdominio] || CONFIG_CLIENTES["agersinop"];
-    if (!clienteAtual) {
-        alert("Cliente não configurado.");
-        return;
-    }
+    async function inicializarVisualStore() {
+        const clienteAtual = await carregarConfigCliente(subdominio);
 
-    // ==============================
-    // APLICAR IDENTIDADE VISUAL IMEDIATAMENTE
-    // ==============================
-    const nomeClienteEl = document.getElementById("nomeCliente");
-    if (nomeClienteEl) {
-        nomeClienteEl.innerText = clienteAtual.nome;
-    }
-
-    const logoEl = document.getElementById("logoCliente");
-    if (logoEl && clienteAtual.logo) {
-        // Garantir que a imagem atualize e apareça
-        logoEl.src = clienteAtual.logo;
-        logoEl.style.display = "block";
-    }
-
-    if (clienteAtual.corPrimaria) {
-        document.body.style.backgroundColor = clienteAtual.corPrimaria;
-
-        // Se houver um container de login, podemos dar um toque da cor secundária nele ou bordas
-        const loginContainer = document.querySelector('.login-container');
-        if (loginContainer && clienteAtual.corSecundaria) {
-            loginContainer.style.borderTop = `5px solid ${clienteAtual.corSecundaria}`;
+        if (!clienteAtual) {
+            console.warn("Cliente não encontrado na API ou não configurado.");
+            return;
         }
+
+        const nomeClienteEl = document.getElementById("nomeCliente");
+        if (nomeClienteEl) {
+            nomeClienteEl.innerText = clienteAtual.nome;
+        }
+
+        const logoEl = document.getElementById("logoCliente");
+        if (logoEl && clienteAtual.logo) {
+            // Garantir que a imagem atualize e apareça
+            logoEl.src = clienteAtual.logo;
+            logoEl.style.display = "block";
+        }
+
+        if (clienteAtual.corPrimaria) {
+            document.body.style.backgroundColor = clienteAtual.corPrimaria;
+
+            // Se houver um container de login, podemos dar um toque da cor secundária nele ou bordas
+            const loginContainer = document.querySelector('.login-container');
+            if (loginContainer && clienteAtual.corSecundaria) {
+                loginContainer.style.borderTop = `5px solid ${clienteAtual.corSecundaria}`;
+            }
+        }
+
+        document.title = `${clienteAtual.nome} - Login`;
     }
 
-    document.title = `${clienteAtual.nome} - Login`;
+    // Aciona a renderização visual isoladamente sem bloquear a lógica principal
+    inicializarVisualStore();
 
     // ==============================
     // LOGIN

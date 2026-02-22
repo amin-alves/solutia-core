@@ -79,16 +79,17 @@ function registrarLog(acao, detalhes = {}) {
 // ==============================
 // CARREGAMENTO DO DASHBOARD
 // ==============================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     if (!sessao) return;
 
     registrarLog('ACESSO_DASHBOARD', { mensagem: 'Logou no painel inicial.' });
 
-    const config = CONFIG_CLIENTES[clienteAtualSubdominio];
+    // Busca configurações assincronamente da API
+    const config = await carregarConfigCliente(clienteAtualSubdominio);
 
     if (!config) {
-        alert("Cliente não configurado.");
+        alert("Configurações do cliente não encontradas no servidor.");
         sessionStorage.clear();
         window.location.href = "index.html";
         return;

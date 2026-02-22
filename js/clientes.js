@@ -15,73 +15,57 @@ const MAPA_DOMINIOS = {
     "ami-eng.vercel.app": "agersinop"
 };
 
-const CONFIG_CLIENTES = {
+// ==============================
+// BUSCA DINÂMICA DE CLIENTE (Supabase API)
+// ==============================
+async function carregarConfigCliente(slug) {
+    if (!slug) return null;
 
-    agersinop: {
-        nome: "Empresa Alpha",
-        logo: "assets/logos/cliente1.png", // substitua pela sua logo real
-        corPrimaria: "#1f2d3d",
-        corSecundaria: "#16222f",
-        tema: {
-            corPrimaria: "#1f2d3d",
-            corSecundaria: "#16222f",
-            larguraSidebar: "250px",
-            alturaBI: "2",
-            alturaWorkflow: "1"
-        },
-        pastas: [
-            {
-                nome: "Financeiro",
-                arquivos: [
-                    { nome: "Relatório Mensal", tipo: "pdf", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-                    { nome: "Fluxo de Caixa", tipo: "xlsx", url: "https://file-examples.com/wp-content/storage/2017/02/file_example_XLSX_10.xlsx" }
-                ]
-            },
-            {
-                nome: "Engenharia",
-                arquivos: [
-                    { nome: "Planta Baixa", tipo: "dwg", url: "#" },
-                    { nome: "Mapa Topográfico", tipo: "gis", url: "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/BRA.geo.json" },
-                    { nome: "Projeto Estrutural", tipo: "img", url: "https://picsum.photos/800/600" }
-                ]
-            },
-            {
-                nome: "Contratos",
-                arquivos: [
-                    { nome: "Contrato de Prestação", tipo: "docx", url: "https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.docx" }
-                ]
-            }
-        ]
-    },
+    try {
+        const { data, error } = await db
+            .from('clientes')
+            .select('*')
+            .eq('slug', slug)
+            .single();
 
-    stoantleste: {
-        nome: "Tribunal Beta",
-        logo: "assets/logos/cliente2.png", // substitua pela sua logo real
-        corPrimaria: "#37225f",
-        corSecundaria: "#2a1747",
-        tema: {
-            corPrimaria: "#37225f",
-            corSecundaria: "#2a1747",
-            larguraSidebar: "250px",
-            alturaBI: "2",
-            alturaWorkflow: "1"
-        },
-        pastas: [
-            {
-                nome: "Processos",
-                arquivos: [
-                    { nome: "Processo 0001", tipo: "pdf", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-                    { nome: "Processo 0002", tipo: "docx", url: "https://file-examples.com/wp-content/storage/2017/02/file-sample_100kB.docx" }
-                ]
+        if (error || !data) {
+            console.error("Erro ao buscar configurações do cliente:", error);
+            return null;
+        }
+
+        // Mapeia o resultado do banco para o padrão esperado pelo FrontEnd
+        return {
+            nome: data.nome,
+            logo: data.logo_url || "assets/logos/default.png", // Fallback pra garantir renderização
+            corPrimaria: data.tema_primario,
+            corSecundaria: data.tema_secundario,
+            tema: {
+                corPrimaria: data.tema_primario,
+                corSecundaria: data.tema_secundario,
+                larguraSidebar: data.largura_sidebar || "250px",
+                alturaBI: data.altura_bi || "60%",
+                alturaWorkflow: data.altura_workflow || "40%"
             },
-            {
-                nome: "Despachos",
-                arquivos: [
-                    { nome: "Despacho Interno", tipo: "pdf", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-                    { nome: "Mapa Cartorial", tipo: "img", url: "https://picsum.photos/800/600" }
-                ]
-            }
-        ]
+            // TODO: Migrar estrutura de pastas para uma Tabela Relacional futura (pastas/arquivos no Storage)
+            // Por enquanto, manteremos mockado na memória apenas para este MVP
+            pastas: slug === 'stoantleste' ? [
+                {
+                    nome: "Processos e Despachos",
+                    arquivos: [
+                        { nome: "Guia Judicial", tipo: "pdf", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" }
+                    ]
+                }
+            ] : [
+                {
+                    nome: "Engenharia (Padrão)",
+                    arquivos: [
+                        { nome: "Projeto Demo", tipo: "pdf", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" }
+                    ]
+                }
+            ]
+        };
+    } catch (err) {
+        console.error("Falha crítica ao obter tenant:", err);
+        return null;
     }
-
-};
+}
