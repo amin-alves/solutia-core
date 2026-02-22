@@ -38,8 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // IDENTIFICAR CLIENTE PELO DOMÍNIO OU QUERY STRING
     // ==============================
     function obterSubdominio() {
-        // 1. (PRIORIDADE) Tenta ler cliente da URL de forma robusta, ignorando codificações como %3D
-        const urlCompleta = decodeURIComponent(window.location.href).toLowerCase();
+        // 1. Decodifica manualmente qualquer coisa que os navegadores injetam
+        const urlCompleta = window.location.href.toLowerCase().replace(/%3d/g, '=').replace(/%26/g, '&');
         let clienteEncontrado = null;
 
         if (urlCompleta.includes("agersinop")) clienteEncontrado = "agersinop";
