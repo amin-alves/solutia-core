@@ -35,10 +35,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==============================
-    // IDENTIFICAR CLIENTE PELO DOMÍNIO/SUBDOMÍNIO
+    // IDENTIFICAR CLIENTE PELO PATH DA URL OU DOMÍNIO
     // ==============================
     function obterSubdominio() {
-        // 1. (PRIORIDADE PARA TESTES) Tenta ler cliente da URL (ex: ?cliente=cliente2)
+        // 1. Tenta identificar pelo PATH da URL (ex: ami-eng.vercel.app/agersinop)
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        if (pathSegments.length > 0) {
+            const pathInfo = pathSegments[0];
+            // Verifica se o path bate com alguma chave do CONFIG_CLIENTES no clientes.js
+            if (typeof CONFIG_CLIENTES !== 'undefined' && CONFIG_CLIENTES[pathInfo]) {
+                return pathInfo;
+            }
+        }
+
+        // 2. (PRIORIDADE PARA TESTES) Tenta ler cliente da URL (ex: ?cliente=cliente2)
         const params = new URLSearchParams(window.location.search);
         const clienteURL = params.get("cliente");
 
@@ -46,15 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return clienteURL;
         }
 
-        // 2. Tenta identificar pelo domínio atual do navegador
+        // 3. Tenta identificar pelo domínio atual do navegador (Retrocompatibilidade)
         const hostnameAtual = window.location.hostname;
-        const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
-
-        if (clienteMapeado) {
-            return clienteMapeado;
+        if (typeof MAPA_DOMINIOS !== 'undefined') {
+            const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
+            if (clienteMapeado) {
+                return clienteMapeado;
+            }
         }
 
-        return "cliente1"; // fallback final para cliente padrão
+        return "agersinop"; // fallback final para cliente padrão
     }
 
     const subdominio = obterSubdominio();
@@ -62,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
     // VALIDAR CONFIG DO CLIENTE
     // ==============================
-    const clienteAtual = CONFIG_CLIENTES[subdominio] || CONFIG_CLIENTES["cliente1"];
+    const clienteAtual = CONFIG_CLIENTES[subdominio] || CONFIG_CLIENTES["agersinop"];
     if (!clienteAtual) {
         alert("Cliente não configurado.");
         return;
@@ -120,8 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
             ip: '127.0.0.1' // Será pego pela API no futuro
         });
 
-        // Redirecionar para dashboard do cliente
-        window.location.href = `dashboard.html?cliente=${usuarioValido.cliente}`;
+        // Redirecionar para dashboard do cliente usando rotas (Vercel)
+        window.location.href = `/${usuarioValido.cliente}/dashboard`;
     });
 
 });

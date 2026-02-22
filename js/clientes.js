@@ -20,7 +20,7 @@ const MAPA_DOMINIOS = {
 
 const CONFIG_CLIENTES = {
 
-    cliente1: {
+    agersinop: {
         nome: "Empresa Alpha",
         logo: "assets/logos/cliente1.png", // substitua pela sua logo real
         corPrimaria: "#1f2d3d",
@@ -57,7 +57,7 @@ const CONFIG_CLIENTES = {
         ]
     },
 
-    cliente2: {
+    stoantleste: {
         nome: "Tribunal Beta",
         logo: "assets/logos/cliente2.png", // substitua pela sua logo real
         corPrimaria: "#37225f",

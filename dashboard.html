@@ -1,55 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Solutia Core - Dashboard</title>
-    <link rel="stylesheet" href="assets/css/dashboard.css">
-    <script src="js/clientes.js"></script>
-    <script src="js/dashboard.js" defer></script>
+    <link rel="stylesheet" href="/assets/css/dashboard.css">
+    <script src="/js/clientes.js"></script>
+    <script src="/js/dashboard.js" defer></script>
 </head>
+
 <body>
 
-<div class="dashboard-container">
+    <div class="dashboard-container">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="logo-area">
-            <h2 id="nomeCliente">Cliente</h2>
-            <div class="usuario-info">
-                <small id="usuarioEmail"></small>
-                <button id="btnLogout">Sair</button>
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-area">
+                <h2 id="nomeCliente">Cliente</h2>
+                <div class="usuario-info">
+                    <small id="usuarioEmail"></small>
+                    <button id="btnLogout">Sair</button>
+                </div>
             </div>
-        </div>
 
-        <nav class="menu">
-            <ul id="estruturaPastas">
-                <!-- Pastas dinâmicas via JS -->
-            </ul>
-        </nav>
-    </aside>
+            <nav class="menu">
+                <ul id="estruturaPastas">
+                    <!-- Pastas dinâmicas via JS -->
+                </ul>
+            </nav>
+        </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="main-content">
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
 
-        <!-- ÁREA BI -->
-        <section class="bi-area" id="biArea">
-            <h2>Área BI</h2>
-            <div id="previewArquivo">
-                Selecione um arquivo para visualizar
-            </div>
-        </section>
+            <!-- ÁREA BI -->
+            <section class="bi-area" id="biArea">
+                <h2>Área BI</h2>
+                <div id="previewArquivo">
+                    Selecione um arquivo para visualizar
+                </div>
+            </section>
 
-        <!-- ÁREA WORKFLOW -->
-        <section class="workflow-area" id="workflowArea">
-            <h2>Workflow</h2>
-            <div>
-                Edição e tramitação acontecerão aqui.
-            </div>
-        </section>
+            <!-- ÁREA WORKFLOW -->
+            <section class="workflow-area" id="workflowArea">
+                <h2>Workflow</h2>
+                <div>
+                    Edição e tramitação acontecerão aqui.
+                </div>
+            </section>
 
-    </main>
+        </main>
 
-</div>
+    </div>
 
 </body>
+
 </html>
