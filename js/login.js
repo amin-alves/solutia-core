@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================
     function obterSubdominio() {
         // 1. (PRIORIDADE) Tenta ler cliente da URL de forma robusta, ignorando codificações como %3D
-        const urlCompleta = window.location.href.toLowerCase();
+        const urlCompleta = decodeURIComponent(window.location.href).toLowerCase();
         let clienteEncontrado = null;
 
         if (urlCompleta.includes("agersinop")) clienteEncontrado = "agersinop";
