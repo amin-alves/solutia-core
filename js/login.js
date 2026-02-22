@@ -35,28 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==============================
-    // IDENTIFICAR CLIENTE PELO PATH DA URL OU DOMÍNIO
+    // IDENTIFICAR CLIENTE PELO DOMÍNIO OU QUERY STRING
     // ==============================
     function obterSubdominio() {
-        // 1. Tenta identificar pelo PATH da URL (ex: ami-eng.vercel.app/agersinop)
-        const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        if (pathSegments.length > 0) {
-            const pathInfo = pathSegments[0];
-            // Verifica se o path bate com alguma chave do CONFIG_CLIENTES no clientes.js
-            if (typeof CONFIG_CLIENTES !== 'undefined' && CONFIG_CLIENTES[pathInfo]) {
-                return pathInfo;
-            }
-        }
-
-        // 2. (PRIORIDADE PARA TESTES) Tenta ler cliente da URL (ex: ?cliente=cliente2)
+        // 1. (PRIORIDADE) Tenta ler cliente da URL query string (ex: ?cliente=agersinop)
         const params = new URLSearchParams(window.location.search);
         const clienteURL = params.get("cliente");
 
-        if (clienteURL) {
+        if (clienteURL && CONFIG_CLIENTES[clienteURL]) {
             return clienteURL;
         }
 
-        // 3. Tenta identificar pelo domínio atual do navegador (Retrocompatibilidade)
+        // 2. Tenta identificar pelo domínio atual do navegador (Retrocompatibilidade)
         const hostnameAtual = window.location.hostname;
         if (typeof MAPA_DOMINIOS !== 'undefined') {
             const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
@@ -131,8 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
             ip: '127.0.0.1' // Será pego pela API no futuro
         });
 
-        // Redirecionar para dashboard do cliente usando rotas (Vercel)
-        window.location.href = `/${usuarioValido.cliente}/dashboard`;
+        // Redirecionar para dashboard do cliente usando query param dinâmico puro
+        window.location.href = `dashboard.html?cliente=${usuarioValido.cliente}`;
     });
 
 });

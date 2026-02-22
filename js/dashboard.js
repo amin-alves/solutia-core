@@ -1,22 +1,16 @@
 // ==============================
-// IDENTIFICAR CLIENTE PELO PATH DA URL OU DOMÍNIO
+// IDENTIFICAR CLIENTE PELO DOMÍNIO OU QUERY STRING
 // ==============================
 function obterSubdominio() {
-    // 1. Tenta identificar pelo PATH da URL (ex: ami-eng.vercel.app/agersinop/dashboard)
-    const pathSegments = window.location.pathname.split('/').filter(Boolean);
-    if (pathSegments.length > 0) {
-        const pathInfo = pathSegments[0];
-        if (typeof CONFIG_CLIENTES !== 'undefined' && CONFIG_CLIENTES[pathInfo]) {
-            return pathInfo;
-        }
-    }
-
-    // 2. (PRIORIDADE PARA TESTES) Tenta ler cliente da URL: ?cliente=cliente2
+    // 1. (PRIORIDADE) Tenta ler cliente da URL: ?cliente=agersinop
     const params = new URLSearchParams(window.location.search);
     const clienteURL = params.get("cliente");
-    if (clienteURL) return clienteURL;
+    // Verifica se o cliente da URL existe nas nossas chaves
+    if (clienteURL && typeof CONFIG_CLIENTES !== 'undefined' && CONFIG_CLIENTES[clienteURL]) {
+        return clienteURL;
+    }
 
-    // 3. Tenta identificar pelo domínio atual do navegador
+    // 2. Tenta identificar pelo domínio atual do navegador
     const hostnameAtual = window.location.hostname;
     if (typeof MAPA_DOMINIOS !== 'undefined') {
         const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
@@ -25,14 +19,14 @@ function obterSubdominio() {
         }
     }
 
-    // 4. Se não houver URL nem domínio mapeado, tenta pegar da sessão
+    // 3. Se não houver URL nem domínio mapeado, tenta pegar da sessão
     const sessaoString = sessionStorage.getItem("sessaoSolutia");
     if (sessaoString) {
         const sessao = JSON.parse(sessaoString);
         return sessao.cliente; // Assume o cliente da sessão
     }
 
-    // 5. Fallback padrão
+    // 4. Fallback padrão
     return "agersinop";
 }
 
@@ -46,7 +40,7 @@ function validarSessao() {
     const sessaoString = sessionStorage.getItem("sessaoSolutia");
 
     if (!sessaoString || !clienteAtualSubdominio) {
-        window.location.href = `/${clienteAtualSubdominio || ""}`;
+        window.location.href = `index.html?cliente=${clienteAtualSubdominio || "agersinop"}`;
         return null;
     }
 
@@ -55,7 +49,7 @@ function validarSessao() {
     // Bloqueia troca manual de cliente
     if (sessao.cliente !== clienteAtualSubdominio) {
         sessionStorage.clear();
-        window.location.href = `/${clienteAtualSubdominio || ""}`;
+        window.location.href = `index.html?cliente=${clienteAtualSubdominio || "agersinop"}`;
         return null;
     }
 
@@ -99,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!config) {
         alert("Cliente não configurado.");
         sessionStorage.clear();
-        window.location.href = "/";
+        window.location.href = "index.html";
         return;
     }
 
@@ -129,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnLogout.addEventListener("click", () => {
             registrarLog('LOGOUT', { mensagem: 'Usuário encerrou sessão.' });
             sessionStorage.removeItem("sessaoSolutia");
-            window.location.href = `/${clienteAtualSubdominio}`;
+            window.location.href = `index.html?cliente=${clienteAtualSubdominio}`;
         });
     }
 });
