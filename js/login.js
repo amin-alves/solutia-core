@@ -38,30 +38,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // IDENTIFICAR CLIENTE PELO DOMÍNIO OU QUERY STRING
     // ==============================
     function obterSubdominio() {
-        // 1. Decodifica manualmente qualquer coisa que os navegadores injetam
-        const urlCompleta = window.location.href.toLowerCase().replace(/%3d/g, '=').replace(/%26/g, '&');
-        console.log("[DEBUG] URL AVALIADA:", urlCompleta);
+        const urlRaw = window.location.search || window.location.href; // Busca forçada na Query String
+        console.log("[CRITICAL_DEBUG] RAW URL:", urlRaw);
 
-        // Verifica as chaves diretamente
-        if (urlCompleta.includes("agersinop")) return "agersinop";
-        if (urlCompleta.includes("stoantleste")) return "stoantleste";
+        // Remove codificações e pega só os caracteres alfanuméricos
+        const urlLimpa = decodeURIComponent(urlRaw).toLowerCase().replace(/[^a-z0-9]/g, '');
+        console.log("[CRITICAL_DEBUG] CLEAN URL ALPHANUMERIC:", urlLimpa);
 
-        // 2. Tenta identificar pelo domínio atual do navegador (Retrocompatibilidade)
+        if (urlLimpa.includes("stoantleste")) return "stoantleste";
+        if (urlLimpa.includes("agersinop")) return "agersinop";
+
+        // Fallback apenas de Hostname
         const hostnameAtual = window.location.hostname;
-        console.log("[DEBUG] HOSTNAME MAPPING:", hostnameAtual);
-
         if (typeof MAPA_DOMINIOS !== 'undefined') {
             const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
-            if (clienteMapeado) {
-                // Se o dominio for ami-eng.vercel.app, nós só redirecionamos SE
-                // não houver nenhum path de cliente.
-                // Mas, como isso estava forçando "agersinop" sempre, vamos evitar fallback falso.
-                return clienteMapeado;
-            }
+            if (clienteMapeado) return clienteMapeado;
         }
 
-        console.log("[DEBUG] NENHUM CLIENTE ACHADO, CAINDO NO FALLBACK");
-        return "agersinop"; // fallback final para cliente padrão
+        return "agersinop"; // fallback absoluto
     }
 
     const subdominio = obterSubdominio();
@@ -81,6 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const nomeClienteEl = document.getElementById("nomeCliente");
     if (nomeClienteEl) {
         nomeClienteEl.innerText = clienteAtual.nome;
+        // INJETAR O DEBUG DE URL DIRETAMENTE NO TÍTULO PARA VERMOS SE A LEITURA FUNCIONA
+        nomeClienteEl.innerText += ` (Diagnostic: ${subdominio})`;
+        nomeClienteEl.style.fontSize = "18px";
     }
 
     const logoEl = document.getElementById("logoCliente");

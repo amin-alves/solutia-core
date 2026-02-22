@@ -2,35 +2,31 @@
 // IDENTIFICAR CLIENTE PELO DOMÍNIO OU QUERY STRING
 // ==============================
 function obterSubdominio() {
-    // 1. Decodifica manualmente qualquer coisa que os navegadores injetam
-    const urlCompleta = window.location.href.toLowerCase().replace(/%3d/g, '=').replace(/%26/g, '&');
-    console.log("[DEBUG Dashboard] URL AVALIADA:", urlCompleta);
+    const urlRaw = window.location.search || window.location.href; // Busca forçada na Query String
+    console.log("[CRITICAL_DEBUG_DASHBOARD] RAW URL:", urlRaw);
 
-    // Verifica as chaves diretamente
-    if (urlCompleta.includes("agersinop")) return "agersinop";
-    if (urlCompleta.includes("stoantleste")) return "stoantleste";
+    // Remove codificações e pega só os caracteres alfanuméricos
+    const urlLimpa = decodeURIComponent(urlRaw).toLowerCase().replace(/[^a-z0-9]/g, '');
+    console.log("[CRITICAL_DEBUG_DASHBOARD] CLEAN URL:", urlLimpa);
 
-    // 2. Tenta identificar pelo domínio atual do navegador (Retrocompatibilidade)
+    if (urlLimpa.includes("stoantleste")) return "stoantleste";
+    if (urlLimpa.includes("agersinop")) return "agersinop";
+
+    // Fallback apenas de Hostname
     const hostnameAtual = window.location.hostname;
-    console.log("[DEBUG Dashboard] HOSTNAME MAPPING:", hostnameAtual);
-
     if (typeof MAPA_DOMINIOS !== 'undefined') {
         const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
-        if (clienteMapeado) {
-            return clienteMapeado;
-        }
+        if (clienteMapeado) return clienteMapeado;
     }
 
-    // 3. Se não houver URL nem domínio mapeado, tenta pegar da sessão
+    // Sessão de fallback se tudo falhar
     const sessaoString = sessionStorage.getItem("sessaoSolutia");
     if (sessaoString) {
         const sessao = JSON.parse(sessaoString);
         return sessao.cliente; // Assume o cliente da sessão
     }
 
-    console.log("[DEBUG Dashboard] NENHUM ACHADO - FALLBACK");
-    // 4. Fallback padrão
-    return "agersinop";
+    return "agersinop"; // fallback absoluto
 }
 
 const clienteAtualSubdominio = obterSubdominio();
@@ -43,7 +39,7 @@ function validarSessao() {
     const sessaoString = sessionStorage.getItem("sessaoSolutia");
 
     if (!sessaoString || !clienteAtualSubdominio) {
-        window.location.href = `index.html?cliente=${clienteAtualSubdominio || "agersinop"}`;
+        window.location.href = `index.html ? cliente = ${clienteAtualSubdominio || "agersinop"} `;
         return null;
     }
 
@@ -52,7 +48,7 @@ function validarSessao() {
     // Bloqueia troca manual de cliente
     if (sessao.cliente !== clienteAtualSubdominio) {
         sessionStorage.clear();
-        window.location.href = `index.html?cliente=${clienteAtualSubdominio || "agersinop"}`;
+        window.location.href = `index.html ? cliente = ${clienteAtualSubdominio || "agersinop"} `;
         return null;
     }
 
@@ -78,7 +74,7 @@ function registrarLog(acao, detalhes = {}) {
         detalhes: detalhes
     });
     localStorage.setItem('solutiaLogs', JSON.stringify(logs));
-    console.log(`[Log Registrado] ${acao}`);
+    console.log(`[Log Registrado] ${acao} `);
 }
 
 
@@ -105,7 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Mostra nome do cliente no topo
     const nomeClienteEl = document.getElementById("nomeCliente");
-    if (nomeClienteEl) nomeClienteEl.innerText = config.nome;
+    if (nomeClienteEl) {
+        nomeClienteEl.innerText = `${config.nome} (Sessão: ${sessao.cliente} | Debug: ${clienteAtualSubdominio})`;
+    }
 
     // Mostra o nome e nível do usuário
     const usuarioEl = document.getElementById("usuarioEmail");
@@ -126,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnLogout.addEventListener("click", () => {
             registrarLog('LOGOUT', { mensagem: 'Usuário encerrou sessão.' });
             sessionStorage.removeItem("sessaoSolutia");
-            window.location.href = `index.html?cliente=${clienteAtualSubdominio}`;
+            window.location.href = `index.html ? cliente = ${clienteAtualSubdominio} `;
         });
     }
 });
@@ -142,7 +140,7 @@ function aplicarControleDeAcesso() {
 
     const nivel = sessao.nivel;
 
-    console.log(`Aplicando permissões para nível: ${nivel}`);
+    console.log(`Aplicando permissões para nível: ${nivel} `);
 
     // Exemplo: Esconder um botão de "Configurações" se não for admin
     // const btnConfig = document.getElementById('btnConfiguracoes');
@@ -165,7 +163,7 @@ function montarEstruturaPastas(pastas) {
     pastas.forEach(pasta => {
         // Pasta principal
         const liPasta = document.createElement("li");
-        liPasta.innerText = `📁 ${pasta.nome}`;
+        liPasta.innerText = `📁 ${pasta.nome} `;
         liPasta.style.fontWeight = "bold";
         liPasta.style.marginTop = "15px";
         liPasta.style.listStyle = "none";
