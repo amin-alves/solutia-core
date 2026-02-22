@@ -6,16 +6,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Níveis: admin, editor, leitor
     // ==============================
     const usuarios = [
-        // Cliente 1
-        { email: "gestor@cliente1.com", senha: "123", cliente: "cliente1", nivel: "admin", nome: "Gestor Alpha" },
-        { email: "gerente@cliente1.com", senha: "123", cliente: "cliente1", nivel: "admin", nome: "Gerente Operacional" },
-        { email: "operaca1@cliente1.com", senha: "123", cliente: "cliente1", nivel: "editor", nome: "Operador A" },
-        { email: "operaca2@cliente1.com", senha: "123", cliente: "cliente1", nivel: "editor", nome: "Operador B" },
-        { email: "consulta@cliente1.com", senha: "123", cliente: "cliente1", nivel: "leitor", nome: "Consultor Externo" },
-        { email: "publico@cliente1.com", senha: "123", cliente: "cliente1", nivel: "leitor", nome: "Cliente Final" },
+        // Cliente 1 (Agersinop)
+        { email: "gestor@cliente1.com", senha: "123", cliente: "agersinop", nivel: "admin", nome: "Gestor Alpha" },
+        { email: "gerente@cliente1.com", senha: "123", cliente: "agersinop", nivel: "admin", nome: "Gerente Operacional" },
+        { email: "operaca1@cliente1.com", senha: "123", cliente: "agersinop", nivel: "editor", nome: "Operador A" },
+        { email: "operaca2@cliente1.com", senha: "123", cliente: "agersinop", nivel: "editor", nome: "Operador B" },
+        { email: "consulta@cliente1.com", senha: "123", cliente: "agersinop", nivel: "leitor", nome: "Consultor Externo" },
+        { email: "publico@cliente1.com", senha: "123", cliente: "agersinop", nivel: "leitor", nome: "Cliente Final" },
 
-        // Cliente 2
-        { email: "cliente2@teste.com", senha: "123", cliente: "cliente2", nivel: "admin", nome: "Admin Beta" }
+        // Cliente 2 (Stoantleste)
+        { email: "cliente2@teste.com", senha: "123", cliente: "stoantleste", nivel: "admin", nome: "Admin Beta" }
     ];
 
     // ==============================
@@ -70,15 +70,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==============================
-    // APLICAR IDENTIDADE VISUAL
+    // APLICAR IDENTIDADE VISUAL IMEDIATAMENTE
     // ==============================
     const nomeClienteEl = document.getElementById("nomeCliente");
-    if (nomeClienteEl) nomeClienteEl.innerText = clienteAtual.nome;
+    if (nomeClienteEl) {
+        nomeClienteEl.innerText = clienteAtual.nome;
+    }
 
     const logoEl = document.getElementById("logoCliente");
-    if (logoEl && clienteAtual.logo) logoEl.src = clienteAtual.logo;
+    if (logoEl && clienteAtual.logo) {
+        // Garantir que a imagem atualize e apareça
+        logoEl.src = clienteAtual.logo;
+        logoEl.style.display = "block";
+    }
 
-    if (clienteAtual.corPrimaria) document.body.style.backgroundColor = clienteAtual.corPrimaria;
+    if (clienteAtual.corPrimaria) {
+        document.body.style.backgroundColor = clienteAtual.corPrimaria;
+
+        // Se houver um container de login, podemos dar um toque da cor secundária nele ou bordas
+        const loginContainer = document.querySelector('.login-container');
+        if (loginContainer && clienteAtual.corSecundaria) {
+            loginContainer.style.borderTop = `5px solid ${clienteAtual.corSecundaria}`;
+        }
+    }
 
     document.title = `${clienteAtual.nome} - Login`;
 
