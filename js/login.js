@@ -2,21 +2,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // ==============================
-    // CONFIGURAÇÃO DE USUÁRIOS (Simulando Banco de Dados)
-    // Níveis: admin, editor, leitor
+    // CONFIGURAÇÃO DE USUÁRIOS (Migrado para Supabase)
     // ==============================
-    const usuarios = [
-        // Cliente 1 (Agersinop)
-        { email: "gestor@cliente1.com", senha: "123", cliente: "agersinop", nivel: "admin", nome: "Gestor Alpha" },
-        { email: "gerente@cliente1.com", senha: "123", cliente: "agersinop", nivel: "admin", nome: "Gerente Operacional" },
-        { email: "operaca1@cliente1.com", senha: "123", cliente: "agersinop", nivel: "editor", nome: "Operador A" },
-        { email: "operaca2@cliente1.com", senha: "123", cliente: "agersinop", nivel: "editor", nome: "Operador B" },
-        { email: "consulta@cliente1.com", senha: "123", cliente: "agersinop", nivel: "leitor", nome: "Consultor Externo" },
-        { email: "publico@cliente1.com", senha: "123", cliente: "agersinop", nivel: "leitor", nome: "Cliente Final" },
-
-        // Cliente 2 (Stoantleste)
-        { email: "cliente2@teste.com", senha: "123", cliente: "stoantleste", nivel: "admin", nome: "Admin Beta" }
-    ];
 
     // ==============================
     // SISTEMA DE LOGS (Mock Supabase via LocalStorage)
@@ -98,43 +85,84 @@ document.addEventListener("DOMContentLoaded", () => {
     // LOGIN
     // ==============================
     const form = document.getElementById("loginForm");
-    form.addEventListener("submit", function (e) {
+    form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const email = document.getElementById("email").value.trim();
         const senha = document.getElementById("senha").value.trim();
+        const msgErro = document.getElementById("msgErro");
 
         if (!email || !senha) {
-            document.getElementById("msgErro").innerText = "Preencha todos os campos.";
+            msgErro.innerText = "Preencha todos os campos.";
             return;
         }
 
-        // 🔒 Validação segura: encontra usuário e verifica o cliente
-        const usuarioValido = usuarios.find(u => u.email === email && u.senha === senha && u.cliente === subdominio);
+        msgErro.innerText = "Autenticando no servidor...";
+        msgErro.style.color = "#333";
 
-        if (!usuarioValido) {
-            document.getElementById("msgErro").innerText = "Usuário ou senha incorretos";
-            return;
+        try {
+            // 1. Tenta logar via Supabase Auth
+            const { data: authData, error: authError } = await db.auth.signInWithPassword({
+                email: email,
+                password: senha
+            });
+
+            if (authError || !authData.user) {
+                msgErro.style.color = "red";
+                msgErro.innerText = "Usuário ou senha incorretos.";
+                console.error("Auth ERROR:", authError);
+                return;
+            }
+
+            // 2. Busca o perfil do usuário logado na tabela 'perfis' para descobrir seu cliente
+            const userId = authData.user.id;
+            const { data: perfilData, error: perfilError } = await db
+                .from('perfis')
+                .select('nome, nivel_acesso, clientes(slug)')
+                .eq('id', userId)
+                .single();
+
+            if (perfilError || !perfilData) {
+                msgErro.style.color = "red";
+                msgErro.innerText = "Erro ao carregar perfil de acesso.";
+                await db.auth.signOut();
+                return;
+            }
+
+            // 3. Verifica se o usuário pertence à URL (Subdomínio/Tenant) atual
+            const clienteSlug = perfilData.clientes ? perfilData.clientes.slug : null;
+            if (clienteSlug !== subdominio) {
+                msgErro.style.color = "red";
+                msgErro.innerText = "Acesso Negado: Você não pertence a esta empresa.";
+                await db.auth.signOut();
+                return;
+            }
+
+            // 4. Salvar sessão localmente (Retrocompatibilidade com Dashboard Atual)
+            const sessao = {
+                email: authData.user.email,
+                nome: perfilData.nome || authData.user.email,
+                nivel: perfilData.nivel_acesso || 'leitor',
+                cliente: subdominio,
+                loginEm: Date.now()
+            };
+            sessionStorage.setItem("sessaoSolutia", JSON.stringify(sessao));
+
+            // Registro de Log Local Mock (A ser convertido para o banco em breve)
+            registrarLog('LOGIN_SUPABASE', authData.user.email, subdominio, {
+                mensagem: 'Usuário iniciou sessão via Supabase Auth com sucesso.'
+            });
+
+            // Sucesso! Continua para o Dashboard
+            msgErro.style.color = "green";
+            msgErro.innerText = "Acesso liberado. Redirecionando...";
+            window.location.href = `dashboard.html?cliente=${subdominio}`;
+
+        } catch (err) {
+            console.error("Critical Engine Auth Error:", err);
+            msgErro.style.color = "red";
+            msgErro.innerText = "Erro interno no servidor de autenticação.";
         }
-
-        // 🔐 Salvar sessão
-        const sessao = {
-            email: usuarioValido.email,
-            nome: usuarioValido.nome,
-            nivel: usuarioValido.nivel,
-            cliente: usuarioValido.cliente,
-            loginEm: Date.now()
-        };
-        sessionStorage.setItem("sessaoSolutia", JSON.stringify(sessao));
-
-        // 📝 Registrar o histórico do login no "Banco de Dados"
-        registrarLog('LOGIN', usuarioValido.email, usuarioValido.cliente, {
-            mensagem: 'Usuário iniciou sessão com sucesso.',
-            ip: '127.0.0.1' // Será pego pela API no futuro
-        });
-
-        // Redirecionar para dashboard do cliente usando query param dinâmico puro
-        window.location.href = `dashboard.html?cliente=${usuarioValido.cliente}`;
     });
 
 });
