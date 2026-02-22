@@ -2,15 +2,19 @@
     "cleanUrls": true,
     "rewrites": [
         {
-            "source": "/(agersinop|stoantleste)/dashboard",
+            "source": "/agersinop/dashboard",
             "destination": "/dashboard.html"
         },
         {
-            "source": "/(agersinop|stoantleste)",
+            "source": "/agersinop",
             "destination": "/index.html"
         },
         {
-            "source": "/(agersinop|stoantleste)/",
+            "source": "/stoantleste/dashboard",
+            "destination": "/dashboard.html"
+        },
+        {
+            "source": "/stoantleste",
             "destination": "/index.html"
         }
     ]
