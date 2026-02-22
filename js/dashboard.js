@@ -1,20 +1,28 @@
 // ==============================
-// IDENTIFICAR CLIENTE PELO "SUBDOMÍNIO" SIMULADO OU URL
+// IDENTIFICAR CLIENTE PELO DOMÍNIO/SUBDOMÍNIO OU URL
 // ==============================
 function obterSubdominio() {
-    // Lê cliente da URL: ?cliente=cliente1
+    // 1. (PRIORIDADE PARA TESTES) Tenta ler cliente da URL: ?cliente=cliente2
     const params = new URLSearchParams(window.location.search);
     const clienteURL = params.get("cliente");
     if (clienteURL) return clienteURL;
 
-    // Se não houver URL, tenta pegar da sessão
+    // 2. Tenta identificar pelo domínio atual do navegador
+    const hostnameAtual = window.location.hostname;
+    const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
+
+    if (clienteMapeado) {
+        return clienteMapeado;
+    }
+
+    // 3. Se não houver URL nem domínio mapeado, tenta pegar da sessão
     const sessaoString = sessionStorage.getItem("sessaoSolutia");
     if (sessaoString) {
         const sessao = JSON.parse(sessaoString);
-        return sessao.cliente;
+        return sessao.cliente; // Assume o cliente da sessão
     }
 
-    // fallback padrão
+    // 4. Fallback padrão
     return "cliente1";
 }
 
@@ -48,11 +56,33 @@ const sessao = validarSessao();
 
 
 // ==============================
+// SISTEMA DE LOGS (Mock Supabase via LocalStorage)
+// ==============================
+function registrarLog(acao, detalhes = {}) {
+    if (!sessao) return;
+
+    const logs = JSON.parse(localStorage.getItem('solutiaLogs')) || [];
+    logs.push({
+        data: new Date().toISOString(),
+        acao: acao,
+        usuario: sessao.email,
+        nivel: sessao.nivel,
+        cliente: sessao.cliente,
+        detalhes: detalhes
+    });
+    localStorage.setItem('solutiaLogs', JSON.stringify(logs));
+    console.log(`[Log Registrado] ${acao}`);
+}
+
+
+// ==============================
 // CARREGAMENTO DO DASHBOARD
 // ==============================
 document.addEventListener("DOMContentLoaded", () => {
 
     if (!sessao) return;
+
+    registrarLog('ACESSO_DASHBOARD', { mensagem: 'Logou no painel inicial.' });
 
     const config = CONFIG_CLIENTES[clienteAtualSubdominio];
 
@@ -70,9 +100,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const nomeClienteEl = document.getElementById("nomeCliente");
     if (nomeClienteEl) nomeClienteEl.innerText = config.nome;
 
-    // Mostra email do usuário
+    // Mostra o nome e nível do usuário
     const usuarioEl = document.getElementById("usuarioEmail");
-    if (usuarioEl) usuarioEl.innerText = sessao.email;
+    if (usuarioEl) {
+        // Exibe Nome (Nível) em vez de apenas o email. Se não tiver nome, usa email.
+        usuarioEl.innerText = `${sessao.nome || sessao.email} (${sessao.nivel})`;
+    }
+
+    // Verifica permissões do nível de acesso
+    aplicarControleDeAcesso();
 
     // Monta a estrutura de pastas
     if (config.pastas) montarEstruturaPastas(config.pastas);
@@ -81,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnLogout = document.getElementById("btnLogout");
     if (btnLogout) {
         btnLogout.addEventListener("click", () => {
+            registrarLog('LOGOUT', { mensagem: 'Usuário encerrou sessão.' });
             sessionStorage.removeItem("sessaoSolutia");
             window.location.href = "index.html";
         });
@@ -89,7 +126,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ==============================
-// MONTAR ESTRUTURA DE PASTAS
+// CONTROLE DE ACESSO (NÍVEIS)
+// ==============================
+function aplicarControleDeAcesso() {
+    // Admin: Acesso total
+    // Editor: Pode ler e alterar, mas não excluir e nem acessar configs
+    // Leitor: Somente leitura (read-only)
+
+    const nivel = sessao.nivel;
+
+    console.log(`Aplicando permissões para nível: ${nivel}`);
+
+    // Exemplo: Esconder um botão de "Configurações" se não for admin
+    // const btnConfig = document.getElementById('btnConfiguracoes');
+    // if (btnConfig && nivel !== 'admin') btnConfig.style.display = 'none';
+
+    // Exemplo: Bloquear "Edição de Workflow" para leitores
+    // if (nivel === 'leitor') { ... }
+}
+
+
+// ==============================
+// MONTAR ESTRUTURA DE PASTAS (Smart Folders + Preview)
 // ==============================
 function montarEstruturaPastas(pastas) {
     const ul = document.getElementById("estruturaPastas");
@@ -100,23 +158,75 @@ function montarEstruturaPastas(pastas) {
     pastas.forEach(pasta => {
         // Pasta principal
         const liPasta = document.createElement("li");
-        liPasta.innerText = pasta.nome;
+        liPasta.innerText = `📁 ${pasta.nome}`;
         liPasta.style.fontWeight = "bold";
-        liPasta.style.marginTop = "10px";
+        liPasta.style.marginTop = "15px";
+        liPasta.style.listStyle = "none";
         ul.appendChild(liPasta);
 
         // Arquivos dentro da pasta
         if (pasta.arquivos && pasta.arquivos.length > 0) {
             pasta.arquivos.forEach(arquivo => {
                 const liArquivo = document.createElement("li");
-                liArquivo.innerText = "— " + arquivo;
-                liArquivo.style.paddingLeft = "15px";
+
+                // Escolhe um ícone visual baseado no tipo do arquivo
+                const icones = {
+                    'pdf': '📄', 'docx': '📝', 'xlsx': '📊',
+                    'img': '🖼️', 'gis': '🗺️', 'dwg': '📐'
+                };
+                const icone = icones[arquivo.tipo] || '📄';
+
+                liArquivo.innerText = `   ${icone} ${arquivo.nome} (${arquivo.tipo.toUpperCase()})`;
+                liArquivo.style.paddingLeft = "20px";
+                liArquivo.style.paddingTop = "5px";
                 liArquivo.style.fontSize = "14px";
                 liArquivo.style.cursor = "pointer";
+                liArquivo.style.listStyle = "none";
 
                 liArquivo.addEventListener("click", () => {
                     const preview = document.getElementById("previewArquivo");
-                    if (preview) preview.innerText = "Visualizando: " + arquivo;
+                    if (!preview) return;
+
+                    // Loga a visualização daquele arquivo
+                    registrarLog('VISUALIZOU_ARQUIVO', { arquivo: arquivo.nome, tipo: arquivo.tipo });
+
+                    // Monta o visualizador apropriado de acordo com o tipo
+                    let iframeSrc = "";
+                    let htmlPreview = "";
+
+                    switch (arquivo.tipo) {
+                        case 'pdf':
+                        case 'img':
+                            // Renderiza nativamente no navegador
+                            iframeSrc = arquivo.url;
+                            htmlPreview = `<iframe src="${iframeSrc}" width="100%" height="100%" style="border:none;"></iframe>`;
+                            break;
+
+                        case 'docx':
+                        case 'xlsx':
+                        case 'pptx':
+                            // Usa o Microsoft Office Web Viewer (requer URL pública acessível)
+                            iframeSrc = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(arquivo.url)}`;
+                            htmlPreview = `<iframe src="${iframeSrc}" width="100%" height="100%" style="border:none;"></iframe>`;
+                            break;
+
+                        case 'gis':
+                        case 'dwg':
+                            // Exemplo de Placeholder até definirmos a API 3D (ex: Autodesk Forge / Leaflet JS)
+                            htmlPreview = `
+                                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center;">
+                                    <h1>${icone}</h1>
+                                    <h3>Visualizador ${arquivo.tipo.toUpperCase()} em Integração</h3>
+                                    <p>O arquivo <b>${arquivo.nome}</b> requer um plugin carregado na nuvem.</p>
+                                    <a href="${arquivo.url}" target="_blank" style="padding:10px 20px; background:${sessao.tema?.corPrimaria || '#333'}; color:white; text-decoration:none; border-radius:5px;">Fazer Download</a>
+                                </div>`;
+                            break;
+
+                        default:
+                            htmlPreview = `<p>Formato não suportado para visualização.</p>`;
+                    }
+
+                    preview.innerHTML = htmlPreview;
                 });
 
                 ul.appendChild(liArquivo);

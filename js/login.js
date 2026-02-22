@@ -2,20 +2,59 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // ==============================
-    // CONFIGURAÇÃO DE USUÁRIOS
+    // CONFIGURAÇÃO DE USUÁRIOS (Simulando Banco de Dados)
+    // Níveis: admin, editor, leitor
     // ==============================
     const usuarios = [
-        { email: "cliente1@teste.com", senha: "123", cliente: "cliente1" },
-        { email: "cliente2@teste.com", senha: "123", cliente: "cliente2" }
+        // Cliente 1
+        { email: "gestor@cliente1.com", senha: "123", cliente: "cliente1", nivel: "admin", nome: "Gestor Alpha" },
+        { email: "gerente@cliente1.com", senha: "123", cliente: "cliente1", nivel: "admin", nome: "Gerente Operacional" },
+        { email: "operaca1@cliente1.com", senha: "123", cliente: "cliente1", nivel: "editor", nome: "Operador A" },
+        { email: "operaca2@cliente1.com", senha: "123", cliente: "cliente1", nivel: "editor", nome: "Operador B" },
+        { email: "consulta@cliente1.com", senha: "123", cliente: "cliente1", nivel: "leitor", nome: "Consultor Externo" },
+        { email: "publico@cliente1.com", senha: "123", cliente: "cliente1", nivel: "leitor", nome: "Cliente Final" },
+
+        // Cliente 2
+        { email: "cliente2@teste.com", senha: "123", cliente: "cliente2", nivel: "admin", nome: "Admin Beta" }
     ];
 
     // ==============================
-    // IDENTIFICAR CLIENTE PELO SUBDOMÍNIO SIMULADO
+    // SISTEMA DE LOGS (Mock Supabase via LocalStorage)
+    // ==============================
+    function registrarLog(acao, usuario, cliente, detalhes = {}) {
+        const logs = JSON.parse(localStorage.getItem('solutiaLogs')) || [];
+        logs.push({
+            data: new Date().toISOString(),
+            acao: acao,
+            usuario: usuario,
+            cliente: cliente,
+            detalhes: detalhes
+        });
+        localStorage.setItem('solutiaLogs', JSON.stringify(logs));
+        console.log(`[Log registrado] ${acao} - ${usuario}`);
+    }
+
+    // ==============================
+    // IDENTIFICAR CLIENTE PELO DOMÍNIO/SUBDOMÍNIO
     // ==============================
     function obterSubdominio() {
+        // 1. (PRIORIDADE PARA TESTES) Tenta ler cliente da URL (ex: ?cliente=cliente2)
         const params = new URLSearchParams(window.location.search);
         const clienteURL = params.get("cliente");
-        return clienteURL || "cliente1"; // fallback para cliente padrão
+
+        if (clienteURL) {
+            return clienteURL;
+        }
+
+        // 2. Tenta identificar pelo domínio atual do navegador
+        const hostnameAtual = window.location.hostname;
+        const clienteMapeado = MAPA_DOMINIOS[hostnameAtual];
+
+        if (clienteMapeado) {
+            return clienteMapeado;
+        }
+
+        return "cliente1"; // fallback final para cliente padrão
     }
 
     const subdominio = obterSubdominio();
@@ -68,10 +107,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // 🔐 Salvar sessão
         const sessao = {
             email: usuarioValido.email,
+            nome: usuarioValido.nome,
+            nivel: usuarioValido.nivel,
             cliente: usuarioValido.cliente,
             loginEm: Date.now()
         };
         sessionStorage.setItem("sessaoSolutia", JSON.stringify(sessao));
+
+        // 📝 Registrar o histórico do login no "Banco de Dados"
+        registrarLog('LOGIN', usuarioValido.email, usuarioValido.cliente, {
+            mensagem: 'Usuário iniciou sessão com sucesso.',
+            ip: '127.0.0.1' // Será pego pela API no futuro
+        });
 
         // Redirecionar para dashboard do cliente
         window.location.href = `dashboard.html?cliente=${usuarioValido.cliente}`;
