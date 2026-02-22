@@ -1,11 +1,16 @@
 {
+    "cleanUrls": true,
     "rewrites": [
         {
-            "source": "/:cliente/dashboard",
+            "source": "/(agersinop|stoantleste)/dashboard",
             "destination": "/dashboard.html"
         },
         {
-            "source": "/:cliente",
+            "source": "/(agersinop|stoantleste)",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/(agersinop|stoantleste)/",
             "destination": "/index.html"
         }
     ]
