@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS public.clientes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     slug VARCHAR(50) UNIQUE NOT NULL, -- Ex: agersinop, stoantleste, cliente1
     nome VARCHAR(100) NOT NULL,
-    dominio VARCHAR(100) UNIQUE, -- (Opcional) am-eng.vercel.app
+    dominio VARCHAR(100) UNIQUE, -- (Opcional) ami-eng.vercel.app
     logo_url TEXT,
     tema_primario VARCHAR(20) DEFAULT '#0d2d5b',
     tema_secundario VARCHAR(20) DEFAULT '#1b4a93',
